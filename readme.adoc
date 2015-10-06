@@ -1,8 +1,12 @@
-== Spring Data Neo4j with Spring Boot and Spring Data Rest - Movies Example Application
+== Spring Data Neo4j 4 with Spring Boot and Spring Data Rest - Movies Example Application
 
 Spring Data Neo4j was the first Spring Data project, started by the CEOs Rod Johnson and Emil Eifrem.
 It enables convenient integration of Neo4j in your Spring-based application.
 It provides object-graph mapping functionality and other features common to the Spring Data projects.
+
+[NOTE]
+*This project uses Spring Data Neo4j 4 which is a complete rewrite from earlier versions.*
+It is optimized for working with Neo4j and based on Neo4j's query language, Cypher.
 
 To use Neo4j with Spring Data Neo4j, you just add the dependency for http://projects.spring.io/spring-boot/[Spring-Boot] and http://projects.spring.io/spring-data-neo4j[Spring-Data-Neo4j] to your build setup.
 
@@ -36,14 +40,11 @@ In our case we use the repository from a `MovieService` to compute the graph rep
 The service is then injected into our main Boot application, which also doubles as `@RestMvcController` which exposes the `/graph` endpoint.
 
 The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the http://projects.spring.io/spring-data-rest/[Spring-Data-Rest project] which exposes our `MovieRepository` as REST endpoints.
+
 The rendering of the movie objects (and related entities) happens automatically out of the box via Jackson mapping.
+To avoid circular JSON generation, the `JSOGGenerator` is used as id-generator.
 
 See the {github}/examples/java/spring-data-neo4j[GitHub repository] for the source code.
-
-[NOTE]
-The current version of Spring Data Neo4j works best with an embedded Neo4j database.
-To achieve highest-performance Neo4j-Server integration move your SDN persistence layer into a Server Extension.
-// Work on improving the Spring Data Neo4j performance with Neo4j server is underway.
 
 === The Stack
 
@@ -51,7 +52,7 @@ These are the components of our Web Application:
 
 * Application Type:         Spring-Boot Java Web Application (Jetty)
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
-* Persistence Access:       Spring-Data-Neo4j
+* Persistence Access:       Spring-Data-Neo4j 4.0
 * Database:                 Neo4j-Server
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
 
@@ -61,10 +62,10 @@ Get Movie
 
 ----
 // JSON object for single movie with cast
-curl http://localhost:8080/movies/search/findByTitle?0=The%20Matrix
+curl http://localhost:8080/movies/search/findByTitle?title=The%20Matrix
 
 // list of JSON objects for movie search results
-curl http://localhost:8080/movies/search/findByTitleContaining?0=matrix
+curl http://localhost:8080/movies/search/findByTitleContaining?title=matrix
 
 // JSON object for whole graph viz (nodes, links - arrays)
 curl http://localhost:8080/graph
