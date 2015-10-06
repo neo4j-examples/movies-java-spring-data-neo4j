@@ -19,6 +19,9 @@ public class Role {
     @StartNode Person person;
     @EndNode   Movie movie;
 
+    public Role() {
+    }
+
     public Collection<String> getRoles() {
         return roles;
     }

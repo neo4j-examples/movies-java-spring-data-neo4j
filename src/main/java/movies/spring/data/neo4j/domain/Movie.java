@@ -4,6 +4,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.ogm.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,7 +22,7 @@ public class Movie {
     int released;
     String tagline;
 
-    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING) Collection<Role> roles;
+    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING) List<Role> roles;
 
 // end::movie[]
 
