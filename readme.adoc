@@ -1,0 +1,71 @@
+== Spring Data Neo4j with Spring Boot and Spring Data Rest - Movies Example Application
+
+Spring Data Neo4j was the first Spring Data project, started by the CEOs Rod Johnson and Emil Eifrem.
+It enables convenient integration of Neo4j in your Spring-based application.
+It provides object-graph mapping functionality and other features common to the Spring Data projects.
+
+To use Neo4j with Spring Data Neo4j, you just add the dependency for http://projects.spring.io/spring-boot/[Spring-Boot] and http://projects.spring.io/spring-data-neo4j[Spring-Data-Neo4j] to your build setup.
+
+[source,xml]
+----
+include::pom.xml[tags=dependencies]
+----
+
+After setting up a Java-based Spring-Boot configuration,
+
+[source,java]
+----
+include::src/main/java/movies/spring/data/neo4j/MyNeo4jConfiguration.java[tags=config]
+----
+
+and annotating your `@Node-` and `@RelationshipEntity`, you can use the `Neo4jTemplate` to access Neo4j APIs and object graph mapping functionality.
+
+[source,java]
+----
+include::src/main/java/movies/spring/data/neo4j/domain/Movie.java[tags=movie]
+----
+
+Additionally you can leverage the convenient Spring-Data repositories to get interface-based DAO implementations injected into your Spring Components.
+
+[source,java]
+----
+include::src/main/java/movies/spring/data/neo4j/repositories/MovieRepository.java[tags=repository]
+----
+
+In our case we use the repository from a `MovieService` to compute the graph representation for the visualization.
+The service is then injected into our main Boot application, which also doubles as `@RestMvcController` which exposes the `/graph` endpoint.
+
+The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the http://projects.spring.io/spring-data-rest/[Spring-Data-Rest project] which exposes our `MovieRepository` as REST endpoints.
+The rendering of the movie objects (and related entities) happens automatically out of the box via Jackson mapping.
+
+See the {github}/examples/java/spring-data-neo4j[GitHub repository] for the source code.
+
+[NOTE]
+The current version of Spring Data Neo4j works best with an embedded Neo4j database.
+To achieve highest-performance Neo4j-Server integration move your SDN persistence layer into a Server Extension.
+// Work on improving the Spring Data Neo4j performance with Neo4j server is underway.
+
+=== The Stack
+
+These are the components of our Web Application:
+
+* Application Type:         Spring-Boot Java Web Application (Jetty)
+* Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
+* Persistence Access:       Spring-Data-Neo4j
+* Database:                 Neo4j-Server
+* Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
+
+=== Endpoints:
+
+Get Movie
+
+----
+// JSON object for single movie with cast
+curl http://localhost:8080/movies/search/findByTitle?0=The%20Matrix
+
+// list of JSON objects for movie search results
+curl http://localhost:8080/movies/search/findByTitleContaining?0=matrix
+
+// JSON object for whole graph viz (nodes, links - arrays)
+curl http://localhost:8080/graph
+----
