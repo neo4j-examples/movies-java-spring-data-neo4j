@@ -14,8 +14,8 @@ import java.util.Map;
  * @author mh
  * @since 24.07.12
  */
-@RepositoryRestResource(collectionResourceRel = "movies", path = "movies")
 // tag::repository[]
+@RepositoryRestResource(collectionResourceRel = "movies", path = "movies")
 public interface MovieRepository extends GraphRepository<Movie> {
     Movie findByTitle(@Param("title") String title);
 
