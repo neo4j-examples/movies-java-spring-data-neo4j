@@ -18,7 +18,7 @@
         <!--<spring-data-commons.version>1.11.0.RELEASE</spring-data-commons.version>
         <spring-data-rest.version>2.4.0.RELEASE</spring-data-rest.version>-->
         <spring-data-neo4j.version>4.1.1.RELEASE</spring-data-neo4j.version>
-        <spring-data-releasetrain.version>Gosling-RELEASE</spring-data-releasetrain.version>
+        <spring-data-releasetrain.version>Hopper-SR1</spring-data-releasetrain.version>
     </properties>
 
     <parent>

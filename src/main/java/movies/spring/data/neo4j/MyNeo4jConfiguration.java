@@ -36,7 +36,7 @@ public class MyNeo4jConfiguration extends Neo4jConfiguration {
 
     @Override
     public SessionFactory getSessionFactory() {
-        return new SessionFactory("movies.spring.data.neo4j.domain");
+        return new SessionFactory(getConfiguration(), "movies.spring.data.neo4j.domain");
     }
 }
 // end::config[]
