@@ -19,7 +19,7 @@ public class Person {
     private int born;
 
     @Relationship(type = "ACTED_IN")
-    List<Movie> movies;
+    private List<Movie> movies;
 
     public Person() { }
 
@@ -34,4 +34,17 @@ public class Person {
     public List<Movie> getMovies() {
         return movies;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBorn(int born) {
+        this.born = born;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+    }
+    
 }

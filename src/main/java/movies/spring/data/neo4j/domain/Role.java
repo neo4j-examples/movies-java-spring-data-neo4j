@@ -15,9 +15,9 @@ import com.voodoodyne.jackson.jsog.JSOGGenerator;
 public class Role {
     @GraphId
     Long id;
-    Collection<String> roles;
-    @StartNode Person person;
-    @EndNode   Movie movie;
+    private Collection<String> roles;
+    @StartNode private Person person;
+    @EndNode   private Movie movie;
 
     public Role() {
     }
@@ -32,5 +32,17 @@ public class Role {
 
     public Movie getMovie() {
         return movie;
+    }
+
+    public void setRoles(Collection<String> roles) {
+        this.roles = roles;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
     }
 }
