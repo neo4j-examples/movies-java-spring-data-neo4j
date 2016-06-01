@@ -15,8 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <start-class>movies.spring.data.neo4j.SampleMovieApplication</start-class>
-        <!--<spring-data-commons.version>1.11.0.RELEASE</spring-data-commons.version>
-        <spring-data-rest.version>2.4.0.RELEASE</spring-data-rest.version>-->
+        <neo4j.version>3.0.1</neo4j.version>
         <spring-data-neo4j.version>4.1.1.RELEASE</spring-data-neo4j.version>
         <spring-data-releasetrain.version>Hopper-SR1</spring-data-releasetrain.version>
     </properties>
@@ -34,25 +33,62 @@
             <version>${spring-data-neo4j.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
         </dependency>
-
-        <!-- end::dependencies[] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+        
         <dependency>
             <groupId>com.voodoodyne.jackson.jsog</groupId>
             <artifactId>jackson-jsog</artifactId>
             <version>1.1</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- end::dependencies[] -->
+        
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-neo4j</artifactId>
+            <version>${spring-data-neo4j.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-kernel</artifactId>
+            <version>${neo4j.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j.app</groupId>
+            <artifactId>neo4j-server</artifactId>
+            <version>${neo4j.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-ogm-test</artifactId>
+            <version>2.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j.test</groupId>
+            <artifactId>neo4j-harness</artifactId>
+            <version>${neo4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
