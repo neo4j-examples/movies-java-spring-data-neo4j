@@ -15,12 +15,12 @@ import com.voodoodyne.jackson.jsog.JSOGGenerator;
 public class Movie {
     @GraphId Long id;
 
-    String title;
+    private String title;
 
-    int released;
-    String tagline;
+    private int released;
+    private String tagline;
 
-    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING) List<Role> roles;
+    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING) private List<Role> roles;
 
 // end::movie[]
 
@@ -41,4 +41,22 @@ public class Movie {
     public Collection<Role> getRoles() {
         return roles;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setReleased(int released) {
+        this.released = released;
+    }
+
+    public void setTagline(String tagline) {
+        this.tagline = tagline;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+    
+    
 }
