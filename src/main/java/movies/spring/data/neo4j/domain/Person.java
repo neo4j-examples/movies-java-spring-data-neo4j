@@ -1,50 +1,51 @@
 package movies.spring.data.neo4j.domain;
 
 
-import org.neo4j.ogm.annotation.*;
-
-import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voodoodyne.jackson.jsog.JSOGGenerator;
+import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
 
 @JsonIdentityInfo(generator=JSOGGenerator.class)
 @NodeEntity
 public class Person {
-    @GraphId Long id;
 
-    private String name;
-    private int born;
+	@GraphId Long id;
 
-    @Relationship(type = "ACTED_IN")
-    private List<Movie> movies;
+	private String name;
 
-    public Person() { }
+	private int born;
 
-    public String getName() {
-        return name;
-    }
+	@Relationship(type = "ACTED_IN")
+	private List<Movie> movies;
 
-    public int getBorn() {
-        return born;
-    }
+	public Person() {
+	}
 
-    public List<Movie> getMovies() {
-        return movies;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public int getBorn() {
+		return born;
+	}
 
-    public void setBorn(int born) {
-        this.born = born;
-    }
+	public List<Movie> getMovies() {
+		return movies;
+	}
 
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
-    }
-    
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setBorn(int born) {
+		this.born = born;
+	}
+
+	public void setMovies(List<Movie> movies) {
+		this.movies = movies;
+	}
 }

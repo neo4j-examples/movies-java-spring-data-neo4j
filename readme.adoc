@@ -14,9 +14,10 @@ The example project is described in detail on the http://neo4j.com/developer/exa
 
 . http://neo4j.com/download[Download, install and start Neo4j Server].
 . open the web-interface at http://localhost:7474
-. configure "*movies*" as password
+. configure a username and password if you haven't already.
 . run `:play movies` command, and click and run the Cypher statement to insert the dataset
 . clone this project from GitHub
+. update `src/main/resources/application.properties` with the username and password you set above.
 . run the project with `mvn spring-boot:run`.
 
 == Code Walkthrough
@@ -27,62 +28,32 @@ To use Neo4j with Spring Data Neo4j, you just add the dependency for http://proj
 [source,xml]
 ----
 <dependency>
-    <groupId>org.springframework.data</groupId>
-    <artifactId>spring-data-neo4j</artifactId>
-    <version>4.1.1.RELEASE</version>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-neo4j</artifactId>
 </dependency>
+
 ----
 //include::pom.xml[tags=dependencies]
 
-After setting up a Java-based Spring-Boot configuration,
-
-.MyNeo4jConfiguration.java
-[source,java]
-----
-@EnableTransactionManagement
-@Import(RepositoryRestMvcConfiguration.class)
-@EnableScheduling
-@EnableAutoConfiguration
-@ComponentScan(basePackages = {"movies.spring.data.neo4j.services"})
-@Configuration
-@EnableNeo4jRepositories(basePackages = "movies.spring.data.neo4j.repositories")
-public class MyNeo4jConfiguration extends Neo4jConfiguration {
-
-    public static final String URL = System.getenv("NEO4J_URL") != null ? System.getenv("NEO4J_URL") : "http://localhost:7474";
-
-    @Bean
-    public org.neo4j.ogm.config.Configuration getConfiguration() {
-        org.neo4j.ogm.config.Configuration config = new org.neo4j.ogm.config.Configuration();
-        config
-                .driverConfiguration()
-                .setDriverClassName("org.neo4j.ogm.drivers.http.driver.HttpDriver")
-                .setURI(URL);
-        return config;
-    }
-
-    @Override
-    public SessionFactory getSessionFactory() {
-        return new SessionFactory("movies.spring.data.neo4j.domain");
-    }
-}
-----
-//include::src/main/java/movies/spring/data/neo4j/MyNeo4jConfiguration.java[tags=config]
-
-and annotating your `@Node-` and `@RelationshipEntity`, you can use the `Neo4jTemplate` to access Neo4j APIs and object graph mapping functionality.
+Annotate your `@NodeEntity` and `@RelationshipEntity`, you can use the OGM `Session` to access Neo4j APIs and object graph mapping functionality.
 
 .Movie.java
 [source,java]
 ----
 @NodeEntity
 public class Movie {
-    @GraphId Long id;
+
+    @GraphId
+    Long id;
 
     String title;
 
     int released;
+
     String tagline;
 
-    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING) List<Role> roles;
+    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING)
+    List<Role> roles;
 ...
 }
 ----
@@ -95,14 +66,15 @@ Additionally you can leverage the convenient Spring-Data repositories to get int
 [source,java]
 ----
 @RepositoryRestResource(collectionResourceRel = "movies", path = "movies")
-public interface MovieRepository extends GraphRepository<Movie> {
-    Movie findByTitle(@Param("title") String title);
+public interface MovieRepository extends PagingAndSortingRepository<Movie, Long> {
 
-    @Query("MATCH (m:Movie) WHERE m.title =~ ('(?i).*'+{title}+'.*') RETURN m")
-    Collection<Movie> findByTitleContaining(@Param("title") String title);
+	Movie findByTitle(@Param("title") String title);
 
-    @Query("MATCH (m:Movie)<-[:ACTED_IN]-(a:Person) RETURN m.title as movie, collect(a.name) as cast LIMIT {limit}")
-    List<Map<String,Object>> graph(@Param("limit") int limit);
+	@Query("MATCH (m:Movie) WHERE m.title =~ ('(?i).*'+{title}+'.*') RETURN m")
+	Collection<Movie> findByTitleContaining(@Param("title") String title);
+
+	@Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
+	Collection<Movie> graph(@Param("limit") int limit);
 }
 ----
 //include::src/main/java/movies/spring/data/neo4j/repositories/MovieRepository.java[tags=repository]
@@ -115,16 +87,14 @@ The other two endpoints for finding multiple movies by title and loading a singl
 The rendering of the movie objects (and related entities) happens automatically out of the box via Jackson mapping.
 To avoid circular JSON generation, the `JSOGGenerator` is used as id-generator.
 
-See the {github}/examples/java/spring-data-neo4j[GitHub repository] for the source code.
-
 == The Stack
 
 These are the components of our Web Application:
 
 * Application Type:         Spring-Boot Java Web Application (Jetty)
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
-* Persistence Access:       Spring-Data-Neo4j 4.1.1
-* Database:                 Neo4j-Server
+* Persistence Access:       Spring-Data-Neo4j 4.2.0
+* Database:                 Neo4j-Server 3.0
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
 
 == Endpoints:
