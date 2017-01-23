@@ -4,16 +4,16 @@ package movies.spring.data.neo4j.domain;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.voodoodyne.jackson.jsog.JSOGGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-@JsonIdentityInfo(generator=JSOGGenerator.class)
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @NodeEntity
 public class Person {
 
-	@GraphId Long id;
+	@GraphId private Long id;
 
 	private String name;
 
@@ -23,6 +23,10 @@ public class Person {
 	private List<Movie> movies;
 
 	public Person() {
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getName() {

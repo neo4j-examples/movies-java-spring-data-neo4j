@@ -1,4 +1,7 @@
-= Spring Data Neo4j 4 with Spring Boot and Spring Data Rest - Movies Example Application
+Movies Example Application
+==========================
+
+How to use Spring Boot, Spring Data Neo4j and Spring Data Rest together.
 
 Spring Data Neo4j was the first Spring Data project, started by the CEOs Rod Johnson and Emil Eifrem.
 It enables convenient integration of Neo4j in your Spring-based application.

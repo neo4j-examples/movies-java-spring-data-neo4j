@@ -4,13 +4,13 @@ package movies.spring.data.neo4j.domain;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.voodoodyne.jackson.jsog.JSOGGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.neo4j.ogm.annotation.EndNode;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.RelationshipEntity;
 import org.neo4j.ogm.annotation.StartNode;
 
-@JsonIdentityInfo(generator=JSOGGenerator.class)
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @RelationshipEntity(type = "ACTED_IN")
 public class Role {
 
@@ -26,6 +26,10 @@ public class Role {
 	private Movie movie;
 
 	public Role() {
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public Collection<String> getRoles() {
