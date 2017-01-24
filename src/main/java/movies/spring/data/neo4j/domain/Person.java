@@ -1,28 +1,39 @@
 package movies.spring.data.neo4j.domain;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+/**
+ * @author Mark Angrish
+ */
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @NodeEntity
 public class Person {
 
-	@GraphId private Long id;
+	@GraphId
+	private Long id;
 
 	private String name;
 
 	private int born;
 
 	@Relationship(type = "ACTED_IN")
-	private List<Movie> movies;
+	private List<Movie> movies = new ArrayList<>();
 
 	public Person() {
+	}
+
+	public Person(String name) {
+
+		this.name = name;
 	}
 
 	public Long getId() {
@@ -39,17 +50,5 @@ public class Person {
 
 	public List<Movie> getMovies() {
 		return movies;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setBorn(int born) {
-		this.born = born;
-	}
-
-	public void setMovies(List<Movie> movies) {
-		this.movies = movies;
 	}
 }

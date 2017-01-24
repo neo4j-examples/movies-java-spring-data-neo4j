@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by markangrish on 23/01/2017.
+ * @author Mark Angrish
  */
 @RestController("/")
 public class MovieController {

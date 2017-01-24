@@ -1,116 +1,103 @@
 package movies.spring.data.neo4j.repositories;
 
-import java.util.ArrayList;
+import static org.junit.Assert.*;
+
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+
 import movies.spring.data.neo4j.domain.Movie;
 import movies.spring.data.neo4j.domain.Person;
 import movies.spring.data.neo4j.domain.Role;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.neo4j.ogm.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
  * @author pdtyreus
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(profiles = "test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Transactional
 public class MovieRepositoryTest {
 
-    @Autowired
-    private MovieRepository instance;
-     @Autowired
-    private PersonRepository personRepository;
+	@Autowired
+	private Session session;
 
-    public MovieRepositoryTest() {
-    }
+	@Autowired
+	private MovieRepository instance;
 
-    @Before
-    public void initialize() {
-       System.out.println("seeding embedded database");
-       Movie matrix = new Movie();
-       matrix.setTitle("The Matrix");
-       matrix.setReleased(1999);
+	@Autowired
+	private PersonRepository personRepository;
 
-       instance.save(matrix);
+	public MovieRepositoryTest() {
+	}
 
-       Person keanu = new Person();
-       keanu.setName("Keanu Reeves");
+	@Before
+	public void setUp() {
+		Movie matrix = new Movie("The Matrix", 1999);
 
-       personRepository.save(keanu);
+		instance.save(matrix);
 
-       Role neo = new Role();
-       neo.setMovie(matrix);
-       neo.setPerson(keanu);
-       Collection<String> roleNames = new HashSet();
-       roleNames.add("Neo");
-       neo.setRoles(roleNames);
+		Person keanu = new Person("Keanu Reeves");
 
-       List<Role> roles = new ArrayList();
-       roles.add(neo);
+		personRepository.save(keanu);
 
-       matrix.setRoles(roles);
+		Role neo = new Role(matrix, keanu);
+		neo.addRoleName("Neo");
 
-       instance.save(matrix);
-    }
+		matrix.addRole(neo);
 
-    /**
-     * Test of findByTitle method, of class MovieRepository.
-     */
-    @Test
-    @DirtiesContext
-    public void testFindByTitle() {
+		instance.save(matrix);
+	}
 
-        System.out.println("findByTitle");
-        String title = "The Matrix";
-        Movie result = instance.findByTitle(title);
-        assertNotNull(result);
-        assertEquals(1999, result.getReleased());
-    }
+	@After
+	public void tearDown() {
+		session.purgeDatabase();
+	}
 
-    /**
-     * Test of findByTitleContaining method, of class MovieRepository.
-     */
-    @Test
-    @DirtiesContext
-    public void testFindByTitleContaining() {
-        System.out.println("findByTitleContaining");
-        String title = "Matrix";
-        Collection<Movie> result = instance.findByTitleContaining(title);
-        assertNotNull(result);
-        assertEquals(1,result.size());
-    }
+	/**
+	 * Test of findByTitle method, of class MovieRepository.
+	 */
+	@Test
+	public void testFindByTitle() {
 
-    /**
-     * Test of graph method, of class MovieRepository.
-     */
-    @Test
-    @DirtiesContext
-    public void testGraph() {
-        System.out.println("graph");
-//        List<Map<String,Object>> graph = instance.graph(5);
+		String title = "The Matrix";
+		Movie result = instance.findByTitle(title);
+		assertNotNull(result);
+		assertEquals(1999, result.getReleased());
+	}
 
-//        assertEquals(1,graph.size());
-//
-//        Map<String,Object> map = graph.get(0);
+	/**
+	 * Test of findByTitleContaining method, of class MovieRepository.
+	 */
+	@Test
+	public void testFindByTitleContaining() {
+		String title = "Matrix";
+		Collection<Movie> result = instance.findByTitleContaining(title);
+		assertNotNull(result);
+		assertEquals(1, result.size());
+	}
 
-//        assertEquals(2,map.size());
-//
-//        String[] cast = (String[])map.get("cast");
-//        String movie = (String)map.get("movie");
-//
-//        assertEquals("The Matrix",movie);
-//        assertEquals("Keanu Reeves", cast[0]);
-    }
+	/**
+	 * Test of graph method, of class MovieRepository.
+	 */
+	@Test
+	public void testGraph() {
+		Collection<Movie> graph = instance.graph(5);
+
+		assertEquals(1, graph.size());
+
+		Movie movie = graph.iterator().next();
+
+		assertEquals(1, movie.getRoles().size());
+
+		assertEquals("The Matrix", movie.getTitle());
+		assertEquals("Keanu Reeves", movie.getRoles().iterator().next().getPerson().getName());
+	}
 }

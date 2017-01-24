@@ -9,14 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 /**
- * @author mh
- * @since 24.07.12
+ * @author Michael Hunger
+ * @author Mark Angrish
  */
 @RepositoryRestResource(collectionResourceRel = "movies", path = "movies")
 public interface MovieRepository extends PagingAndSortingRepository<Movie, Long> {
 
-	// See: https://jira.spring.io/browse/DATAGRAPH-960
-	Movie findByTitle(@Param("title_0") String title);
+	Movie findByTitle(@Param("title") String title);
 
 	@Query("MATCH (m:Movie) WHERE m.title =~ ('(?i).*'+{title}+'.*') RETURN m")
 	Collection<Movie> findByTitleContaining(@Param("title") String title);

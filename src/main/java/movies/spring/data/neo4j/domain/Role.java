@@ -1,6 +1,7 @@
 package movies.spring.data.neo4j.domain;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -10,6 +11,9 @@ import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.RelationshipEntity;
 import org.neo4j.ogm.annotation.StartNode;
 
+/**
+ * @author Mark Angrish
+ */
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @RelationshipEntity(type = "ACTED_IN")
 public class Role {
@@ -17,7 +21,7 @@ public class Role {
 	@GraphId
 	private Long id;
 
-	private Collection<String> roles;
+	private Collection<String> roles = new ArrayList<>();
 
 	@StartNode
 	private Person person;
@@ -26,6 +30,11 @@ public class Role {
 	private Movie movie;
 
 	public Role() {
+	}
+
+	public Role(Movie movie, Person actor) {
+		this.movie = movie;
+		this.person = actor;
 	}
 
 	public Long getId() {
@@ -44,15 +53,7 @@ public class Role {
 		return movie;
 	}
 
-	public void setRoles(Collection<String> roles) {
-		this.roles = roles;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
-
-	public void setMovie(Movie movie) {
-		this.movie = movie;
+	public void addRoleName(String name) {
+		this.roles.add(name);
 	}
 }
