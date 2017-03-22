@@ -10,6 +10,7 @@ It provides object-graph mapping functionality and other features common to the 
 [NOTE]
 *This project uses Spring Data Neo4j 4 which is a complete rewrite from earlier versions.*
 It is optimized for working with Neo4j Server and based on Neo4j's query language, Cypher.
+At the moment this project uses a snapshot of SDN. This will be updated in Spring Data Ingalls Release SR2.
 
 The example project is described in detail on the http://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
@@ -73,8 +74,7 @@ public interface MovieRepository extends PagingAndSortingRepository<Movie, Long>
 
 	Movie findByTitle(@Param("title") String title);
 
-	@Query("MATCH (m:Movie) WHERE m.title =~ ('(?i).*'+{title}+'.*') RETURN m")
-	Collection<Movie> findByTitleContaining(@Param("title") String title);
+	Collection<Movie> findByTitleLike(@Param("title") String title);
 
 	@Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
 	Collection<Movie> graph(@Param("limit") int limit);
@@ -88,7 +88,6 @@ The service is then injected into our main Boot application, which also doubles 
 The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the http://projects.spring.io/spring-data-rest/[Spring-Data-Rest project] which exposes our `MovieRepository` as REST endpoints.
 
 The rendering of the movie objects (and related entities) happens automatically out of the box via Jackson mapping.
-To avoid circular JSON generation, the `JSOGGenerator` is used as id-generator.
 
 == The Stack
 
@@ -96,8 +95,8 @@ These are the components of our Web Application:
 
 * Application Type:         Spring-Boot Java Web Application (Jetty)
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
-* Persistence Access:       Spring-Data-Neo4j 4.2.0
-* Database:                 Neo4j-Server 3.0
+* Persistence Access:       Spring-Data-Neo4j 4.2.x
+* Database:                 Neo4j-Server 3.x
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
 
 == Endpoints:
@@ -109,7 +108,7 @@ Get Movie
 curl http://localhost:8080/movies/search/findByTitle?title=The%20Matrix
 
 // list of JSON objects for movie search results
-curl http://localhost:8080/movies/search/findByTitleContaining?title=matrix
+curl http://localhost:8080/movies/search/findByTitleLike?title=*matrix*
 
 // JSON object for whole graph viz (nodes, links - arrays)
 curl http://localhost:8080/graph
