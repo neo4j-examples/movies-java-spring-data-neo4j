@@ -90,15 +90,18 @@
                         $("#poster").attr("src","http://neo4j-contrib.github.io/developer-resources/language-guides/assets/posters/"+encodeURIComponent(movie.title)+".jpg");
                         var $list = $("#crew").empty();
                         movie.roles.forEach(function (cast) {
-                            var job = cast.job || "acted";
-                            $list.append($("<li>" + cast.person.name + " " +job + (job == "acted"?" as " + cast.roles.join(", ") : "") + "</li>"));
+                            $.get(cast._links.person.href, function(personData) {
+                                var person = personData.name;
+                                var job = cast.job || "acted";
+                                $list.append($("<li>" + person + " " +job + (job == "acted"?" as " + cast.roles.join(", ") : "") + "</li>"));
+                            });
                         });
                     }, "json");
             return false;
         }
         function search() {
             var query=$("#search").find("input[name=search]").val();
-            $.get("/movies/search/findByTitleContaining?title=" + encodeURIComponent(query),
+            $.get("/movies/search/findByTitleLike?title=*" + encodeURIComponent(query) + "*",
                     function (data) {
                         var t = $("table#results tbody").empty();
                         if (!data) return;
