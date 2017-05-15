@@ -10,7 +10,6 @@ It provides object-graph mapping functionality and other features common to the 
 [NOTE]
 *This project uses Spring Data Neo4j 4 which is a complete rewrite from earlier versions.*
 It is optimized for working with Neo4j Server and based on Neo4j's query language, Cypher.
-At the moment this project uses a snapshot of SDN. This will be updated in Spring Data Ingalls Release SR2.
 
 The example project is described in detail on the http://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
