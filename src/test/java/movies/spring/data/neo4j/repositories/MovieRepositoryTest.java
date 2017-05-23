@@ -67,7 +67,7 @@ public class MovieRepositoryTest {
 	@Test
 	public void testFindByTitle() {
 
-		String title = "*The Matrix*";
+		String title = "The Matrix";
 		Movie result = instance.findByTitle(title);
 		assertNotNull(result);
 		assertEquals(1999, result.getReleased());
@@ -79,7 +79,7 @@ public class MovieRepositoryTest {
 	@Test
 	public void testFindByTitleContaining() {
 		String title = "Matrix";
-		Collection<Movie> result = instance.findByTitleLike(title);
+		Collection<Movie> result = instance.findByTitleContaining(title);
 		assertNotNull(result);
 		assertEquals(1, result.size());
 	}
