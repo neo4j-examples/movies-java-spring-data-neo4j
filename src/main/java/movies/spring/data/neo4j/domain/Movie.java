@@ -1,68 +1,80 @@
 package movies.spring.data.neo4j.domain;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.GeneratedValue;
+import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 /**
  * @author Mark Angrish
  */
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @NodeEntity
 public class Movie {
 
-	@GraphId
+    @Id
+    @GeneratedValue
 	private Long id;
-
 	private String title;
-
 	private int released;
-
 	private String tagline;
-
 	@Relationship(type = "ACTED_IN", direction = Relationship.INCOMING)
-	private List<Role> roles = new ArrayList<>();
+	private List<Role> roles;
 
 	public Movie() {
 	}
 
-	public Movie(String title, int released) {
-
+	public Movie(String title, int released, String tagline) {
 		this.title = title;
 		this.released = released;
+		this.tagline = tagline;
 	}
 
+	//id
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	//title
 	public String getTitle() {
 		return title;
 	}
+//	public void setTitle(String title) {
+//		this.title = title;
+//	}
 
+	//release year
 	public int getReleased() {
 		return released;
 	}
+//	public void setReleased(int released) {
+//		this.released = released;
+//	}
 
+	//tag line
 	public String getTagline() {
 		return tagline;
 	}
+//	public void setTagline(String tagline) {
+//		this.tagline = tagline;
+//	}
 
-	public Collection<Role> getRoles() {
+	//roles
+	public List<Role> getRoles() {
 		return roles;
 	}
-
+//	public void setRoles(List<Role> roles) {
+//		this.roles = roles;
+//	}
 	public void addRole(Role role) {
+		if (this.roles == null) {
+			this.roles = new ArrayList<>();
+		}
 		this.roles.add(role);
 	}
 }

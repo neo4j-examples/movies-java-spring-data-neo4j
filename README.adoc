@@ -1,21 +1,20 @@
 Movies Example Application
 ==========================
 
-How to use Spring Boot, Spring Data Neo4j and Spring Data Rest together.
+How to use Spring Boot, Spring Data, and Neo4j together.
 
-Spring Data Neo4j was the first Spring Data project, started by the CEOs Rod Johnson and Emil Eifrem.
-It enables convenient integration of Neo4j in your Spring-based application.
-It provides object-graph mapping functionality and other features common to the Spring Data projects.
+Spring Data Neo4j enables convenient integration of Neo4j in your Spring-based application.
+It provides object-graph mapping (OGM) functionality and other features common to the Spring Data projects.
 
 [NOTE]
-*This project uses Spring Data Neo4j 4 which is a complete rewrite from earlier versions.*
+*This project uses Spring Data Neo4j 5.*
 It is optimized for working with Neo4j Server and based on Neo4j's query language, Cypher.
 
 The example project is described in detail on the http://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
 == Quickstart
 
-. http://neo4j.com/download[Download, install and start Neo4j Server].
+. http://neo4j.com/download[Download, install, and start Neo4j Desktop].
 . open the web-interface at http://localhost:7474
 . configure a username and password if you haven't already.
 . run `:play movies` command, and click and run the Cypher statement to insert the dataset

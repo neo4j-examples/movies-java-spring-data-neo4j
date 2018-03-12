@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author Mark Angrish
  */
-@RestController("/")
+@RestController
+@RequestMapping("/")
 public class MovieController {
 
-	final MovieService movieService;
+	private final MovieService movieService;
 
 	@Autowired
 	public MovieController(MovieService movieService) {
@@ -22,7 +23,7 @@ public class MovieController {
 	}
 
 	@RequestMapping("/graph")
-	public Map<String, Object> graph(@RequestParam(value = "limit",required = false) Integer limit) {
+	public Map<String, Object> graph(@RequestParam Integer limit) {
 		return movieService.graph(limit == null ? 100 : limit);
 	}
 }

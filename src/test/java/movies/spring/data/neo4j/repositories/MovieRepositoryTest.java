@@ -7,11 +7,9 @@ import java.util.Collection;
 import movies.spring.data.neo4j.domain.Movie;
 import movies.spring.data.neo4j.domain.Person;
 import movies.spring.data.neo4j.domain.Role;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.neo4j.ogm.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,38 +25,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class MovieRepositoryTest {
 
 	@Autowired
-	private Session session;
+	private MovieRepository movieRepo;
 
 	@Autowired
-	private MovieRepository instance;
-
-	@Autowired
-	private PersonRepository personRepository;
+	private PersonRepository personRepo;
 
 	public MovieRepositoryTest() {
 	}
 
 	@Before
 	public void setUp() {
-		Movie matrix = new Movie("The Matrix", 1999);
+		Movie matrix = new Movie("The Matrix", 1999, "Welcome to the Real World");
 
-		instance.save(matrix);
+		movieRepo.save(matrix);
 
-		Person keanu = new Person("Keanu Reeves");
+		Person keanu = new Person("Keanu Reeves", 1964);
 
-		personRepository.save(keanu);
+		personRepo.save(keanu);
 
 		Role neo = new Role(matrix, keanu);
 		neo.addRoleName("Neo");
 
 		matrix.addRole(neo);
 
-		instance.save(matrix);
-	}
-
-	@After
-	public void tearDown() {
-		session.purgeDatabase();
+		movieRepo.save(matrix);
 	}
 
 	/**
@@ -68,7 +58,7 @@ public class MovieRepositoryTest {
 	public void testFindByTitle() {
 
 		String title = "The Matrix";
-		Movie result = instance.findByTitle(title);
+		Movie result = movieRepo.findByTitle(title);
 		assertNotNull(result);
 		assertEquals(1999, result.getReleased());
 	}
@@ -79,7 +69,7 @@ public class MovieRepositoryTest {
 	@Test
 	public void testFindByTitleContaining() {
 		String title = "*Matrix*";
-		Collection<Movie> result = instance.findByTitleLike(title);
+		Collection<Movie> result = movieRepo.findByTitleLike(title);
 		assertNotNull(result);
 		assertEquals(1, result.size());
 	}
@@ -89,7 +79,7 @@ public class MovieRepositoryTest {
 	 */
 	@Test
 	public void testGraph() {
-		Collection<Movie> graph = instance.graph(5);
+		Collection<Movie> graph = movieRepo.graph(5);
 
 		assertEquals(1, graph.size());
 
