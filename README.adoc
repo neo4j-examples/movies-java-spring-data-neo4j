@@ -8,23 +8,26 @@ It provides object-graph mapping (OGM) functionality and other features common t
 
 [NOTE]
 *This project uses Spring Data Neo4j 5.*
-It is optimized for working with Neo4j Server and based on Neo4j's query language, Cypher.
+It is optimized for working with Neo4j Desktop and based on Neo4j's query language, Cypher.
 
-The example project is described in detail on the http://neo4j.com/developer/example-project/[Neo4j Developer Site]
+The example project is described in detail on the https://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
 == Quickstart
 
 . http://neo4j.com/download[Download, install, and start Neo4j Desktop].
-. open the web-interface at http://localhost:7474
-. configure a username and password if you haven't already.
-. run `:play movies` command, and click and run the Cypher statement to insert the dataset
-. clone this project from GitHub
-. update `src/main/resources/application.properties` with the username and password you set above.
-. run the project with `mvn spring-boot:run`.
+. From here, there are two ways you can access the end points.
+    1) Open the browser web interface at http://localhost:7474
+        a. Configure a username and password, if you haven't already.
+    2) In Neo4j Desktop, click on your project, click on 'Manage' on the database you are using, click 'Open Browser'.
+        a. Should not need to log in. Password was set up when you set up the database.
+. Run `:play movies` command, and click and run the Cypher statement to insert the dataset
+. Clone this project from GitHub
+. Update `src/main/resources/application.properties` with the username and password you set above.
+. Run the project with `mvn spring-boot:run`.
 
 == Code Walkthrough
 
-To use Neo4j with Spring Data Neo4j, you just add the dependency for http://projects.spring.io/spring-boot/[Spring-Boot] and http://projects.spring.io/spring-data-neo4j[Spring-Data-Neo4j] to your build setup.
+To use Neo4j with Spring Data Neo4j, you just add the dependency for https://projects.spring.io/spring-boot/[Spring-Boot] and https://projects.spring.io/spring-data-neo4j/[Spring-Data-Neo4j] to your build setup.
 
 .pom.xml
 [source,xml]
@@ -32,8 +35,13 @@ To use Neo4j with Spring Data Neo4j, you just add the dependency for http://proj
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-neo4j</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-ogm-http-driver</artifactId>
+        </exclusion>
+    </exclusions>
 </dependency>
-
 ----
 //include::pom.xml[tags=dependencies]
 
@@ -45,33 +53,28 @@ Annotate your `@NodeEntity` and `@RelationshipEntity`, you can use the OGM `Sess
 @NodeEntity
 public class Movie {
 
-    @GraphId
-    Long id;
-
-    String title;
-
-    int released;
-
-    String tagline;
-
-    @Relationship(type="ACTED_IN", direction = Relationship.INCOMING)
-    List<Role> roles;
-...
+    @Id @GeneratedValue private Long id;
+	private String title;
+	private int released;
+	private String tagline;
+	@Relationship(type = "ACTED_IN", direction = Relationship.INCOMING)
+	private List<Role> roles;
 }
 ----
 //include::src/main/java/movies/spring/data/neo4j/domain/Movie.java[tags=movie]
-
 
 Additionally you can leverage the convenient Spring-Data repositories to get interface-based DAO implementations injected into your Spring Components.
 
 .MovieRepository.java
 [source,java]
 ----
-@RepositoryRestResource(collectionResourceRel = "movies", path = "movies")
-public interface MovieRepository extends PagingAndSortingRepository<Movie, Long> {
+@Repository
+public interface MovieRepository extends Neo4jRepository<Movie, Long> {
 
+    @Query("MATCH (m:Movie {title: {title}}) RETURN m LIMIT 1")
 	Movie findByTitle(@Param("title") String title);
 
+    @Query("MATCH (m:Movie) WHERE m.title =~ '(?i).*matrix*.' RETURN m")
 	Collection<Movie> findByTitleLike(@Param("title") String title);
 
 	@Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
@@ -80,10 +83,10 @@ public interface MovieRepository extends PagingAndSortingRepository<Movie, Long>
 ----
 //include::src/main/java/movies/spring/data/neo4j/repositories/MovieRepository.java[tags=repository]
 
-In our case we use the repository from a `MovieService` to compute the graph representation for the visualization.
+In our case, we use the repository from a `MovieService` to compute the graph representation for the visualization.
 The service is then injected into our main Boot application, which also doubles as `@RestMvcController` which exposes the `/graph` endpoint.
 
-The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the http://projects.spring.io/spring-data-rest/[Spring-Data-Rest project] which exposes our `MovieRepository` as REST endpoints.
+The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the https://projects.spring.io/spring-data-rest/[Spring-Data-Rest project] which exposes our `MovieRepository` as REST endpoints.
 
 The rendering of the movie objects (and related entities) happens automatically out of the box via Jackson mapping.
 
@@ -93,14 +96,15 @@ These are the components of our Web Application:
 
 * Application Type:         Spring-Boot Java Web Application (Jetty)
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
-* Persistence Access:       Spring-Data-Neo4j 4.2.x
-* Database:                 Neo4j-Server 3.x
+* Persistence Access:       Spring-Data-Neo4j 5.0.5
+* Database:                 Neo4j-Server 3.3.x
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
 
 == Endpoints:
 
 Get Movie
 
+To run our setup queries through our REST endpoints, from the Neo4j Desktop main console, go to 'Manage' on your database, then choose the 'Terminal' tab. You can copy/paste the commands below into that terminal and should see results. Now feel free to add other queries to your application to see more data and relationships!
 ----
 // JSON object for single movie with cast
 curl http://localhost:8080/movies/search/findByTitle?title=The%20Matrix

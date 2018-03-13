@@ -7,6 +7,7 @@ import movies.spring.data.neo4j.domain.Role;
 import movies.spring.data.neo4j.repositories.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +16,7 @@ public class MovieService {
 
     private final static Logger LOG = LoggerFactory.getLogger(MovieService.class);
 
-    private final MovieRepository movieRepository;
-
-    public MovieService(MovieRepository movieRepository) {
-        this.movieRepository = movieRepository;
-    }
+    @Autowired MovieRepository movieRepository;
 
 	private Map<String, Object> toD3Format(Collection<Movie> movies) {
 		List<Map<String, Object>> nodes = new ArrayList<>();
@@ -50,6 +47,18 @@ public class MovieService {
 		result.put(key2, value2);
 		return result;
 	}
+
+    @Transactional(readOnly = true)
+    public Movie findByTitle(String title) {
+        Movie result = movieRepository.findByTitle(title);
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public Collection<Movie> findByTitleLike(String title) {
+        Collection<Movie> result = movieRepository.findByTitleLike(title);
+        return result;
+    }
 
 	@Transactional(readOnly = true)
 	public Map<String, Object>  graph(int limit) {

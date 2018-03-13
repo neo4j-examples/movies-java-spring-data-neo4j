@@ -81,6 +81,11 @@
             <artifactId>neo4j-ogm-bolt-driver</artifactId>
             <version>${neo4j-ogm.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.neo4j.examples</groupId>
+            <artifactId>sdn5-movies</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

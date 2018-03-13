@@ -32,7 +32,6 @@ public class Movie {
 		this.tagline = tagline;
 	}
 
-	//id
 	public Long getId() {
 		return id;
 	}
@@ -40,37 +39,22 @@ public class Movie {
 		this.id = id;
 	}
 
-	//title
 	public String getTitle() {
 		return title;
 	}
-//	public void setTitle(String title) {
-//		this.title = title;
-//	}
 
-	//release year
 	public int getReleased() {
 		return released;
 	}
-//	public void setReleased(int released) {
-//		this.released = released;
-//	}
 
-	//tag line
 	public String getTagline() {
 		return tagline;
 	}
-//	public void setTagline(String tagline) {
-//		this.tagline = tagline;
-//	}
 
-	//roles
 	public List<Role> getRoles() {
 		return roles;
 	}
-//	public void setRoles(List<Role> roles) {
-//		this.roles = roles;
-//	}
+
 	public void addRole(Role role) {
 		if (this.roles == null) {
 			this.roles = new ArrayList<>();
