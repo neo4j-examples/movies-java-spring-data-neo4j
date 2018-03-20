@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class MovieController {
 
-	final MovieService movieService;
+	private final MovieService movieService;
 
 	@Autowired
 	public MovieController(MovieService movieService) {
@@ -35,7 +35,6 @@ public class MovieController {
         return movieService.findByTitleLike(title);
     }
 
-    //@RequestMapping("/graph")
     @GetMapping("/graph")
 	public Map<String, Object> graph(@RequestParam(value = "limit",required = false) Integer limit) {
 		return movieService.graph(limit == null ? 100 : limit);

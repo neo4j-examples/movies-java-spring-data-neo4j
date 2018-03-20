@@ -18,12 +18,8 @@ public interface MovieRepository extends Neo4jRepository<Movie, Long> {
     @Query("MATCH (m:Movie {title: {title}}) RETURN m LIMIT 1")
 	Movie findByTitle(@Param("title") String title);
 
-    @Query("MATCH (m:Movie) WHERE m.title =~ '(?i).*matrix*.' RETURN m")
 	Collection<Movie> findByTitleLike(@Param("title") String title);
 
-//    @Query("MATCH (m:Movie)-[r:ACTED_IN]-(p:Person) WHERE m.name = {0} RETURN m, collect(r), collect(p)")
-//    Collection<Person> findPersons(String name);
-
-	@Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
+    @Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
 	Collection<Movie> graph(@Param("limit") int limit);
 }

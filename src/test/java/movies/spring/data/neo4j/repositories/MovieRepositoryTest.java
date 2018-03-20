@@ -25,10 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MovieRepositoryTest {
 
 	@Autowired
-	private MovieRepository movieRepo;
+	private MovieRepository movieRepository;
 
 	@Autowired
-	private PersonRepository personRepo;
+	private PersonRepository personRepository;
 
 	public MovieRepositoryTest() {
 	}
@@ -37,18 +37,18 @@ public class MovieRepositoryTest {
 	public void setUp() {
 		Movie matrix = new Movie("The Matrix", 1999, "Welcome to the Real World");
 
-		movieRepo.save(matrix);
+		movieRepository.save(matrix);
 
 		Person keanu = new Person("Keanu Reeves", 1964);
 
-		personRepo.save(keanu);
+		personRepository.save(keanu);
 
 		Role neo = new Role(matrix, keanu);
 		neo.addRoleName("Neo");
 
 		matrix.addRole(neo);
 
-		movieRepo.save(matrix);
+		movieRepository.save(matrix);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class MovieRepositoryTest {
 	public void testFindByTitle() {
 
 		String title = "The Matrix";
-		Movie result = movieRepo.findByTitle(title);
+		Movie result = movieRepository.findByTitle(title);
 		assertNotNull(result);
 		assertEquals(1999, result.getReleased());
 	}
@@ -69,7 +69,7 @@ public class MovieRepositoryTest {
 	@Test
 	public void testFindByTitleContaining() {
 		String title = "*Matrix*";
-		Collection<Movie> result = movieRepo.findByTitleLike(title);
+		Collection<Movie> result = movieRepository.findByTitleLike(title);
 		assertNotNull(result);
 		assertEquals(1, result.size());
 	}
@@ -79,7 +79,7 @@ public class MovieRepositoryTest {
 	 */
 	@Test
 	public void testGraph() {
-		Collection<Movie> graph = movieRepo.graph(5);
+		Collection<Movie> graph = movieRepository.graph(5);
 
 		assertEquals(1, graph.size());
 

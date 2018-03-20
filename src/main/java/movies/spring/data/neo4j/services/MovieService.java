@@ -7,7 +7,6 @@ import movies.spring.data.neo4j.domain.Role;
 import movies.spring.data.neo4j.repositories.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,10 @@ public class MovieService {
 
     private final static Logger LOG = LoggerFactory.getLogger(MovieService.class);
 
-    @Autowired MovieRepository movieRepository;
+	private MovieRepository movieRepository;
+	public MovieService(MovieRepository movieRepository) {
+		this.movieRepository = movieRepository;
+	}
 
 	private Map<String, Object> toD3Format(Collection<Movie> movies) {
 		List<Map<String, Object>> nodes = new ArrayList<>();

@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @SpringBootApplication
 @EnableNeo4jRepositories("movies.spring.data.neo4j.repositories")
-@EntityScan("movies.spring.data.neo4j.domain")
 public class SampleMovieApplication {
 
     public static void main(String[] args) {
