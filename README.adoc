@@ -45,7 +45,7 @@ To use Neo4j with Spring Data Neo4j, you just add the dependency for https://pro
 ----
 //include::pom.xml[tags=dependencies]
 
-Annotate your `@NodeEntity` and `@RelationshipEntity`, you can use the OGM `Session` to access Neo4j APIs and object graph mapping functionality.
+Annotate your `@NodeEntity` and `@RelationshipEntity`. You can use the OGM `Session` to access Neo4j APIs and object graph mapping functionality.
 
 .Movie.java
 [source,java]
@@ -63,21 +63,19 @@ public class Movie {
 ----
 //include::src/main/java/movies/spring/data/neo4j/domain/Movie.java[tags=movie]
 
-Additionally you can leverage the convenient Spring-Data repositories to get interface-based DAO implementations injected into your Spring Components.
+Additionally, you can leverage the convenient Spring-Data repositories to get interface-based DAO implementations injected into your Spring Components.
 
 .MovieRepository.java
 [source,java]
 ----
-@Repository
 public interface MovieRepository extends Neo4jRepository<Movie, Long> {
 
     @Query("MATCH (m:Movie {title: {title}}) RETURN m LIMIT 1")
 	Movie findByTitle(@Param("title") String title);
 
-    @Query("MATCH (m:Movie) WHERE m.title =~ '(?i).*matrix*.' RETURN m")
 	Collection<Movie> findByTitleLike(@Param("title") String title);
 
-	@Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
+    @Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
 	Collection<Movie> graph(@Param("limit") int limit);
 }
 ----
@@ -86,9 +84,9 @@ public interface MovieRepository extends Neo4jRepository<Movie, Long> {
 In our case, we use the repository from a `MovieService` to compute the graph representation for the visualization.
 The service is then injected into our main Boot application, which also doubles as `@RestMvcController` which exposes the `/graph` endpoint.
 
-The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the https://projects.spring.io/spring-data-rest/[Spring-Data-Rest project] which exposes our `MovieRepository` as REST endpoints.
+The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the https://projects.spring.io/spring-data-rest/[Spring-Data-Rest project], which exposes our `MovieRepository` as REST endpoints.
 
-The rendering of the movie objects (and related entities) happens automatically out of the box via Jackson mapping.
+The rendering of the movie objects (and related entities) happens automatically via Jackson mapping.
 
 == The Stack
 
@@ -104,7 +102,14 @@ These are the components of our Web Application:
 
 Get Movie
 
-To run our setup queries through our REST endpoints, from the Neo4j Desktop main console, go to 'Manage' on your database, then choose the 'Terminal' tab. You can copy/paste the commands below into that terminal and should see results. Now feel free to add other queries to your application to see more data and relationships!
+To run our setup queries through our REST endpoints:
+
+From the Neo4j Desktop main console, go to 'Manage' on your database, then choose the 'Terminal' tab. You can copy/paste the commands below into that terminal and should see results.
+
+You can also go to http://localhost:8080 to interact with the data.
+
+Now feel free to add other queries to your application to see more data and relationships!
+
 ----
 // JSON object for single movie with cast
 curl http://localhost:8080/movies/search/findByTitle?title=The%20Matrix
