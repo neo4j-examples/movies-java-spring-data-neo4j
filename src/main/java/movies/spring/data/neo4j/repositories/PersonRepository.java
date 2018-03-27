@@ -12,6 +12,4 @@ public interface PersonRepository extends Neo4jRepository<Person, Long> {
 
     Person findByName(String name);
 
-//    @Query("MATCH (p:Person)-[r:ACTED_IN]-(m:Movie) WHERE p.name = {0} RETURN p, collect(r), collect(m)")
-//    Collection<Movie> findMovies(String name);
 }

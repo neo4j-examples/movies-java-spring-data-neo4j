@@ -30,9 +30,6 @@ public class MovieRepositoryTest {
 	@Autowired
 	private PersonRepository personRepository;
 
-	public MovieRepositoryTest() {
-	}
-
 	@Before
 	public void setUp() {
 		Movie matrix = new Movie("The Matrix", 1999, "Welcome to the Real World");

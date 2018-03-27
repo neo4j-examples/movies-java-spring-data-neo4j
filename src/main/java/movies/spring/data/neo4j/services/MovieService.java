@@ -15,7 +15,7 @@ public class MovieService {
 
     private final static Logger LOG = LoggerFactory.getLogger(MovieService.class);
 
-	private MovieRepository movieRepository;
+	private final MovieRepository movieRepository;
 	public MovieService(MovieRepository movieRepository) {
 		this.movieRepository = movieRepository;
 	}
