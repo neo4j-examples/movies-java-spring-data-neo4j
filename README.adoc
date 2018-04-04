@@ -64,7 +64,6 @@ Additionally, you can leverage the convenient Spring-Data repositories to get in
 ----
 public interface MovieRepository extends Neo4jRepository<Movie, Long> {
 
-    @Query("MATCH (m:Movie {title: {title}}) RETURN m LIMIT 1")
     Movie findByTitle(@Param("title") String title);
 
     Collection<Movie> findByTitleLike(@Param("title") String title);
@@ -106,10 +105,10 @@ Now feel free to add other queries to your application to see more data and rela
 
 ----
 // JSON object for single movie with cast
-curl http://localhost:8080/movies/search/findByTitle?title=The%20Matrix
+curl http://localhost:8080/movie?title=The%20Matrix
 
 // list of JSON objects for movie search results
-curl http://localhost:8080/movies/search/findByTitleLike?title=*matrix*
+curl http://localhost:8080/movies?title=*matrix*
 
 // JSON object for whole graph viz (nodes, links - arrays)
 curl http://localhost:8080/graph

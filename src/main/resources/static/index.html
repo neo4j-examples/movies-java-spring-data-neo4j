@@ -82,7 +82,7 @@
 <script type="text/javascript">
     $(function () {
         function showMovie(title) {
-            $.get("/movies/search/findByTitle?title=" + encodeURIComponent(title), // todo fix paramter in SDN
+            $.get("/movie?title=" + encodeURIComponent(title), // todo fix paramter in SDN
                     function (data) {
                         if (!data ) return; //  || !data["_embedded"].movies) return;
                         var movie = data; // ["_embedded"].movies[0];
@@ -101,7 +101,7 @@
         }
         function search() {
             var query=$("#search").find("input[name=search]").val();
-            $.get("/movies/search/findByTitleLike?title=*" + encodeURIComponent(query) + "*",
+            $.get("/movies?title=*" + encodeURIComponent(query) + "*",
                     function (data) {
                         var t = $("table#results tbody").empty();
                         if (!data) return;

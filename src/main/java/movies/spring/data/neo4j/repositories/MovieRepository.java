@@ -13,7 +13,6 @@ import org.springframework.data.repository.query.Param;
  */
 public interface MovieRepository extends Neo4jRepository<Movie, Long> {
 
-    @Query("MATCH (m:Movie {title: {title}}) RETURN m LIMIT 1")
 	Movie findByTitle(@Param("title") String title);
 
 	Collection<Movie> findByTitleLike(@Param("title") String title);

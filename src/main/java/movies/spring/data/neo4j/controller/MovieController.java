@@ -24,12 +24,12 @@ public class MovieController {
 		this.movieService = movieService;
 	}
 
-    @GetMapping("/movies/search/findByTitle")
+    @GetMapping("/movie")
     public Movie findByTitle(@RequestParam String title) {
         return movieService.findByTitle(title);
     }
 
-    @GetMapping("/movies/search/findByTitleLike")
+    @GetMapping("/movies")
     public Collection<Movie> findByTitleLike(@RequestParam String title) {
         return movieService.findByTitleLike(title);
     }
