@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Mark Angrish
+ * @author Michael J. Simons
  */
 @RestController
 @RequestMapping("/")
@@ -23,16 +24,6 @@ public class MovieController {
 	public MovieController(MovieService movieService) {
 		this.movieService = movieService;
 	}
-
-    @GetMapping("/movie")
-    public Movie findByTitle(@RequestParam String title) {
-        return movieService.findByTitle(title);
-    }
-
-    @GetMapping("/movies")
-    public Collection<Movie> findByTitleLike(@RequestParam String title) {
-        return movieService.findByTitleLike(title);
-    }
 
     @GetMapping("/graph")
 	public Map<String, Object> graph(@RequestParam(value = "limit",required = false) Integer limit) {
