@@ -47,12 +47,18 @@ Annotate your `@NodeEntity` and `@RelationshipEntity`. You can use the OGM `Sess
 @NodeEntity
 public class Movie {
 
-    @Id @GeneratedValue private Long id;
-	private String title;
-	private int released;
-	private String tagline;
-	@Relationship(type = "ACTED_IN", direction = Relationship.INCOMING)
-	private List<Role> roles;
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String title;
+
+    private int released;
+
+    private String tagline;
+
+    @Relationship(type = "ACTED_IN", direction = Relationship.INCOMING)
+    private List<Role> roles;
 }
 ----
 include::src/main/java/movies/spring/data/neo4j/domain/Movie.java[tags=movie]

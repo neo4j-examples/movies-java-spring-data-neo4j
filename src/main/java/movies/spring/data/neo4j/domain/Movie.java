@@ -3,11 +3,12 @@ package movies.spring.data.neo4j.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Mark Angrish
@@ -15,8 +16,8 @@ import org.neo4j.ogm.annotation.Relationship;
 @NodeEntity
 public class Movie {
 
-    @Id
-    @GeneratedValue
+	@Id
+	@GeneratedValue
 	private Long id;
 	private String title;
 	private int released;
@@ -37,9 +38,6 @@ public class Movie {
 
 	public Long getId() {
 		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getTitle() {
