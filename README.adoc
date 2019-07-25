@@ -111,7 +111,7 @@ Now feel free to add other queries to your application to see more data and rela
 
 ----
 // JSON object for single movie with cast
-curl http://localhost:8080/movie?title=The%20Matrix
+curl http://localhost:8080/movies?title=The%20Matrix
 
 // list of JSON objects for movie search results
 curl http://localhost:8080/movies?title=*matrix*
