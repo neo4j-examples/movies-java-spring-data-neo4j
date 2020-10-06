@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="http://neo4j-contrib.github.io/developer-resources/language-guides/assets/css/main.css">
+    <link rel="stylesheet" href="/css/main.css">
     <title>Neo4j Movies</title>
 </head>
 
@@ -26,7 +26,7 @@
             <div class="navbar-header col-sm-6 col-md-6">
                 <div class="logo-well">
                     <a href="https://neo4j.com/developer">
-                        <img src="http://neo4j-contrib.github.io/developer-resources/language-guides/assets/img/logo-white.svg" alt="Neo4j World's Leading Graph Database" id="logo">
+                        <img src="/img/logo-white.svg" alt="Neo4j World's Leading Graph Database" id="logo">
                     </a>
                 </div>
                 <div class="navbar-brand">
@@ -87,7 +87,7 @@
                         if (!data) return;
                         var movie = data;
                         $("#title").text(movie.title);
-                        $("#poster").attr("src","http://neo4j-contrib.github.io/developer-resources/language-guides/assets/posters/"+encodeURIComponent(movie.title)+".jpg");
+                        $("#poster").attr("src","/posters/"+encodeURIComponent(movie.title)+".jpg");
                         var $list = $("#crew").empty();
                         movie.roles.forEach(function (cast) {
                             $.get(cast._links.person.href, function(personData) {

@@ -61,7 +61,6 @@ public class Movie {
     private List<Role> roles;
 }
 ----
-include::src/main/java/movies/spring/data/neo4j/domain/Movie.java[tags=movie]
 
 Additionally, you can leverage the convenient Spring-Data repositories to get interface-based DAO implementations injected into your Spring Components.
 
@@ -75,13 +74,12 @@ public interface MovieRepository extends Neo4jRepository<Movie, Long> {
     Collection<Movie> findByTitleLike(@Param("title") String title);
 
     @Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
-    Collection<Movie> graph(@Param("limit") int limit);
+    Collection<Movie> findAllLimitBy(@Param("limit") int limit);
 }
 ----
-include::src/main/java/movies/spring/data/neo4j/repositories/MovieRepository.java[tags=repository]
 
-In our case, we use the repository from a `MovieService` to compute the graph representation for the visualization.
-The service is then injected into our main Boot application, which also doubles as `@RestMvcController` which exposes the `/graph` endpoint.
+In our case, we use the repository from a `MovieService` to compute a different graph representation for the visualization.
+The service is then injected into our main Boot application, which also doubles as `@RestMvcController` that exposes the `/graph` endpoint.
 
 The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the https://projects.spring.io/spring-data-rest/[Spring-Data-Rest project], which exposes our `MovieRepository` as REST endpoints.
 
@@ -93,8 +91,8 @@ These are the components of our Web Application:
 
 * Application Type:         Spring-Boot Java Web Application (Jetty)
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
-* Persistence Access:       Spring-Data-Neo4j 5.0.5
-* Database:                 Neo4j-Server 3.3.x
+* Persistence Access:       Spring-Data-Neo4j 5.3x5
+* Database:                 Neo4j-Server 3.5.x
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
 
 == Endpoints:

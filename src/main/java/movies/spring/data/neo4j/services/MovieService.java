@@ -64,7 +64,7 @@ public class MovieService {
 
 	@Transactional(readOnly = true)
 	public Map<String, Object>  graph(int limit) {
-		Collection<Movie> result = movieRepository.graph(limit);
+		Collection<Movie> result = movieRepository.findAllLimitBy(limit);
 		return toD3Format(result);
 	}
 }

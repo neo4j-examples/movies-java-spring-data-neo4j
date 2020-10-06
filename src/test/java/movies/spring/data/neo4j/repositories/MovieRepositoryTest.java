@@ -8,21 +8,46 @@ import movies.spring.data.neo4j.domain.Movie;
 import movies.spring.data.neo4j.domain.Person;
 import movies.spring.data.neo4j.domain.Role;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.neo4j.harness.ServerControls;
+import org.neo4j.harness.TestServerBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author pdtyreus
+ * @author Daniel Tyreus
+ * @author Mark Angrish
+ * @author Jasper Blues
+ * @author Frantisek Hartman
+ * @author Jennifer Reif
+ * @author Michael J. Simons
  */
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
 public class MovieRepositoryTest {
+
+	private static ServerControls embeddedDatabaseServer;
+
+	@BeforeClass
+	public static void initializeNeo4j() {
+
+		embeddedDatabaseServer = TestServerBuilders.newInProcessBuilder().newServer();
+	}
+
+	@DynamicPropertySource
+	static void neo4jProperties(DynamicPropertyRegistry registry) {
+
+		registry.add("spring.data.neo4j.uri", embeddedDatabaseServer::boltURI);
+		registry.add("spring.data.neo4j.username", () -> "neo4j");
+		registry.add("spring.data.neo4j.password", () -> null);
+	}
 
 	@Autowired
 	private MovieRepository movieRepository;
@@ -76,7 +101,7 @@ public class MovieRepositoryTest {
 	 */
 	@Test
 	public void testGraph() {
-		Collection<Movie> graph = movieRepository.graph(5);
+		Collection<Movie> graph = movieRepository.findAllLimitBy(5);
 
 		assertEquals(1, graph.size());
 
