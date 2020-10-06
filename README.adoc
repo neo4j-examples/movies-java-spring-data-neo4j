@@ -91,7 +91,7 @@ These are the components of our Web Application:
 
 * Application Type:         Spring-Boot Java Web Application (Jetty)
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
-* Persistence Access:       Spring-Data-Neo4j 5.3x5
+* Persistence Access:       Spring-Data-Neo4j 5.3.x
 * Database:                 Neo4j-Server 3.5.x
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
 
