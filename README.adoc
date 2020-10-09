@@ -7,23 +7,35 @@ Spring Data Neo4j enables convenient integration of Neo4j in your Spring-based a
 It provides object-graph mapping (OGM) functionality and other features common to the Spring Data projects.
 
 [NOTE]
-*This project uses Spring Data Neo4j 5.*
-It is optimized for working with Neo4j Desktop and based on Neo4j's query language, Cypher.
+This project uses Spring Data Neo4j 6. The previous version, using SDN 5 + OGM can still be accessed under the
+https://github.com/neo4j-examples/movies-java-spring-data-neo4j/tree/sdn5+ogm branch.
 
 The example project is described in detail on the https://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
+The project uses Java 11.
+
 == Quickstart
 
-. http://neo4j.com/download[Download, install, and start Neo4j Desktop].
-. From here, there are two ways you can access the end points.
-    1) Open the browser web interface at http://localhost:7474
-        a. Configure a username and password, if you haven't already.
-    2) In Neo4j Desktop, click on your project, click on 'Manage' on the database you are using, click 'Open Browser'.
-        a. Should not need to log in. Password was set up when you set up the database.
+First, you need to have a local Neo4j running.
+The easiest way is Docker.
+If you have a docker installed locally, than please run
+
+[source,console]
+----
+docker run --publish=7474:7474 --publish=7687:7687 -e 'NEO4J_AUTH=neo4j/secret' neo4j:4.1
+----
+
+Another option is to use Neo4j desktop, which can be downloaded from here: http://neo4j.com/download.
+If you chose that way, install and start as instructed by the desktop application. You need to start a new
+database inside desktop.
+
+. After you have Neo4j up and running, open up a browser and goto http://localhost:7474.
+Enter the credentials (`neo4j:secret` if you chose the Docker approach above or the credentials you supplied in Neo4j Desktop).
+Then
 . Run `:play movies` command, and click and run the Cypher statement to insert the dataset
 . Clone this project from GitHub
 . Update `src/main/resources/application.properties` with the username and password you set above.
-. Run the project with `mvn spring-boot:run`.
+. Run the project with `./mvnw spring-boot:run`
 
 == Code Walkthrough
 
@@ -39,81 +51,110 @@ To use Neo4j with Spring Data Neo4j, you just add the dependency for https://pro
 ----
 include::pom.xml[tags=dependencies]
 
-Annotate your `@NodeEntity` and `@RelationshipEntity`. You can use the OGM `Session` to access Neo4j APIs and object graph mapping functionality.
+Describe your domain model with `@Node`, `@Relationship` and `@RelationshipProperties`.
 
-.Movie.java
+.Excerpt of the domain model in this application. Accessor are omitted for brevity.
 [source,java]
 ----
-@NodeEntity
+@Node
 public class Movie {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	@Id
+	private final String title;
 
-    private String title;
+	@Property("tagline")
+	private final String description;
 
-    private int released;
+	@Relationship(type = "ACTED_IN", direction = Direction.INCOMING)
+	private List<Actor> actors = new ArrayList<>();
 
-    private String tagline;
+	@Relationship(type = "DIRECTED", direction = Direction.INCOMING)
+	private List<Person> directors = new ArrayList<>();
 
-    @Relationship(type = "ACTED_IN", direction = Relationship.INCOMING)
-    private List<Role> roles;
+	private Integer released;
+
+	public Movie(String title, String description) {
+		this.title = title;
+		this.description = description;
+	}
+}
+
+@RelationshipProperties
+public class Actor {
+
+	@TargetNode
+	private final Person person;
+
+	private List<String> roles = new ArrayList<>();
+
+	public Actor(Person person) {
+		this.person = person;
+	}
+}
+
+@Node
+public class Person {
+
+	@Id
+	private final String name;
+
+	private Integer born;
+
+	public Person(Integer born, String name) {
+		this.born = born;
+		this.name = name;
+	}
 }
 ----
 
-Additionally, you can leverage the convenient Spring-Data repositories to get interface-based DAO implementations injected into your Spring Components.
+Those are interface based DAO implementation.
+Depending whether you extend from `Repository`, `CrudRepository` or `Neo4jRepository`, they declare a lot of functionality
+out of the box.
+We went with a minimalistic "declare things as needed"-approach.
 
 .MovieRepository.java
 [source,java]
 ----
-public interface MovieRepository extends Neo4jRepository<Movie, Long> {
+interface MovieRepository extends Repository<Movie, String> {
 
-    Movie findByTitle(@Param("title") String title);
+	List<Movie> findAll();
 
-    Collection<Movie> findByTitleLike(@Param("title") String title);
+	Optional<Movie> findById(String title);
 
-    @Query("MATCH (m:Movie)<-[r:ACTED_IN]-(a:Person) RETURN m,r,a LIMIT {limit}")
-    Collection<Movie> findAllLimitBy(@Param("limit") int limit);
+	Optional<Movie> findOneByTitle(String title);
+
+	List<Movie> findAllByTitleLikeIgnoreCase(String title);
+
+	List<Movie> findAllByDirectorsName(String name);
+
+	List<Movie> findAllByActorsPersonName(String name);
 }
 ----
 
-In our case, we use the repository from a `MovieService` to compute a different graph representation for the visualization.
-The service is then injected into our main Boot application, which also doubles as `@RestMvcController` that exposes the `/graph` endpoint.
+In addition, you can choose to use the `Neo4jTemplate` to access your domain without repositories or the `Neo4jClient`
+to access the Neo4j database inside Spring transactions but without mapping at all.
 
-The other two endpoints for finding multiple movies by title and loading a single movie are provided out of the box by the https://projects.spring.io/spring-data-rest/[Spring-Data-Rest project], which exposes our `MovieRepository` as REST endpoints.
+And last but not least, you can use the pure driver as we show in `MovieService`. We have no need for Spring transactions
+or mapping here, as we want to compute just a different graph representation for a front end visualization.
 
-The rendering of the movie objects (and related entities) happens automatically via Jackson mapping.
+We added https://springdoc.org to documente our rest endpoints.
+
 
 == The Stack
 
 These are the components of our Web Application:
 
-* Application Type:         Spring-Boot Java Web Application (Jetty)
+* Application Type:         Spring-Boot Java Web Application
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
-* Persistence Access:       Spring-Data-Neo4j 5.3x5
-* Database:                 Neo4j-Server 3.5.x
+* Persistence Access:       Spring-Data-Neo4j 6.x
+* Database:                 Neo4j-Server 4.x
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
+* OpenAPI Documentation:    SpringDoc
 
 == Endpoints:
 
-Get Movie
+Goto http://localhost:8080/docs to access the OpenAPI Swagger documentation for the endpoints we expose.
+The generated documentation comes with cURL commands you can run in most environments from your favorite terminal.
 
-To run our setup queries through our REST endpoints:
-
-From the Neo4j Desktop main console, go to 'Manage' on your database, then choose the 'Terminal' tab. You can copy/paste the commands below into that terminal and should see results.
-
-You can also go to http://localhost:8080 to interact with the data.
-
-Now feel free to add other queries to your application to see more data and relationships!
-
-----
-// JSON object for single movie with cast
-curl http://localhost:8080/movies?title=The%20Matrix
-
-// list of JSON objects for movie search results
-curl http://localhost:8080/movies?title=*matrix*
-
-// JSON object for whole graph viz (nodes, links - arrays)
-curl http://localhost:8080/graph
-----
+Goto http://localhost:8080 for a visualization and some interaction with this web application.
+The REST endpoints are designed to be used with the frontend of https://github.com/neo4j-examples/neo4j-movies-template.
