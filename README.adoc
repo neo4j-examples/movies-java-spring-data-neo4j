@@ -89,7 +89,7 @@ The rendering of the movie objects (and related entities) happens automatically 
 
 These are the components of our Web Application:
 
-* Application Type:         Spring-Boot Java Web Application (Jetty)
+* Application Type:         Spring-Boot Java Web Application
 * Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
 * Persistence Access:       Spring-Data-Neo4j 5.3x5
 * Database:                 Neo4j-Server 3.5.x
