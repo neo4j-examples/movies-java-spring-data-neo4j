@@ -26,9 +26,9 @@ public class PersonRepositoryTest {
 	@DynamicPropertySource
 	static void neo4jProperties(DynamicPropertyRegistry registry) {
 
-		registry.add("spring.data.neo4j.uri", embeddedDatabaseServer::boltURI);
-		registry.add("spring.data.neo4j.username", () -> "neo4j");
-		registry.add("spring.data.neo4j.password", () -> null);
+		registry.add("spring.neo4j.uri", embeddedDatabaseServer::boltURI);
+		registry.add("spring.neo4j.username", () -> "neo4j");
+		registry.add("spring.neo4j.password", () -> null);
 	}
 
 	@Test
