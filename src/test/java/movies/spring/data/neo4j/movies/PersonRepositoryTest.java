@@ -2,6 +2,7 @@ package movies.spring.data.neo4j.movies;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.harness.Neo4j;
@@ -51,7 +52,7 @@ public class PersonRepositoryTest {
 	}
 
 	@BeforeAll
-	public static void initializeNeo4j() {
+	static void initializeNeo4j() {
 
 		embeddedDatabaseServer = Neo4jBuilders.newInProcessBuilder()
 			.withDisabledServer() // Don't need Neos HTTP server
@@ -101,4 +102,9 @@ public class PersonRepositoryTest {
 			.build();
 	}
 
+	@AfterAll
+	static void stopNeo4j() {
+
+		embeddedDatabaseServer.close();
+	}
 }
