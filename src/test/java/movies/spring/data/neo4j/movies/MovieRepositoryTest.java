@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Daniel Tyreus
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Michael J. Simons
  */
 @DataNeo4jTest
-@Transactional
 public class MovieRepositoryTest {
 
 	private static Neo4j embeddedDatabaseServer;
@@ -47,7 +45,6 @@ public class MovieRepositoryTest {
 		registry.add("spring.neo4j.username", () -> "neo4j");
 		registry.add("spring.neo4j.password", () -> null);
 	}
-
 
 	/**
 	 * Test of findByTitle method, of class MovieRepository.

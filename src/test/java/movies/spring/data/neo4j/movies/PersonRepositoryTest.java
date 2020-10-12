@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Good test candidates for repositories are often times custom queries
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Michael J. Simons
  */
 @DataNeo4jTest
-@Transactional
 public class PersonRepositoryTest {
 
 	private static Neo4j embeddedDatabaseServer;
