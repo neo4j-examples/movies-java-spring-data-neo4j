@@ -1,7 +1,7 @@
 Movies Example Application
 ==========================
 
-[![Build Status](https://github.com/neo4j-examples/movies-java-spring-data-neo4j/workflows/build/badge.svg)](https://github.com/neo4j-examples/movies-java-spring-data-neo4j/actions)
+image:https://github.com/neo4j-examples/movies-java-spring-data-neo4j/workflows/build/badge.svg[Build Status,link=https://github.com/neo4j-examples/movies-java-spring-data-neo4j/actions]
 
 How to use Spring Boot, Spring Data, and Neo4j together.
 
