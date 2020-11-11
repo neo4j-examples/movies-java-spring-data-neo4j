@@ -82,14 +82,14 @@
 <script type="text/javascript">
     $(function () {
         function showMovie(title) {
-            $.get("/movies/search/findByTitle?title=" + encodeURIComponent(title), // todo fix paramter in SDN
+            $.get("/api/v0/movies/search/findOneByTitle?title=" + encodeURIComponent(title), // todo fix paramter in SDN
                     function (data) {
                         if (!data) return;
                         var movie = data;
                         $("#title").text(movie.title);
                         $("#poster").attr("src","/posters/"+encodeURIComponent(movie.title)+".jpg");
                         var $list = $("#crew").empty();
-                        movie.roles.forEach(function (cast) {
+                        movie.actors.forEach(function (cast) {
                             $.get(cast._links.person.href, function(personData) {
                                 var person = personData.name;
                                 var job = cast.job || "acted";
@@ -101,7 +101,7 @@
         }
         function search() {
             var query=$("#search").find("input[name=search]").val();
-            $.get("/movies/search/findByTitleLike?title=*" + encodeURIComponent(query) + "*",
+            $.get("/api/v0/movies/search/findAllByTitleLikeIgnoreCase?title=" + encodeURIComponent(query),
                     function (data) {
                         var t = $("table#results tbody").empty();
                         if (!data) return;
@@ -130,7 +130,7 @@
             .attr("width", "100%").attr("height", "100%")
             .attr("pointer-events", "all");
 
-    d3.json("/graph", function(error, graph) {
+    d3.json("/api/v0/movies/graph", function(error, graph) {
         if (error) return;
 
         force.nodes(graph.nodes).links(graph.links).start();
