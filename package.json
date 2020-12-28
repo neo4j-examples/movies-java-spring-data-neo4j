@@ -1,0 +1,11 @@
+{
+  "name": "movies-neo4j-java-spring-data",
+  "version": "0.0.1",
+  "description": "Demo application using Spring Data Neo4j",
+  "repository": "https://github.com/neo4j-examples/movies-java-spring-data-neo4j",
+  "license": "Apache-2.0",
+  "private": true,
+  "devDependencies": {
+    "cypress": "^6.2.0"
+  }
+}

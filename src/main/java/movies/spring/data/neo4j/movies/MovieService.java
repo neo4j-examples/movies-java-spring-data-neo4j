@@ -1,12 +1,18 @@
 package movies.spring.data.neo4j.movies;
 
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.SessionConfig;
+import org.neo4j.driver.Value;
+import org.neo4j.driver.types.TypeSystem;
+import org.springframework.data.neo4j.core.DatabaseSelectionProvider;
+import org.springframework.data.neo4j.core.Neo4jClient;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Session;
-import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
 
 /**
  * @author Michael Hunger
@@ -19,19 +25,44 @@ public class MovieService {
 
 	private final MovieRepository movieRepository;
 
+	private final Neo4jClient neo4jClient;
+
 	private final Driver driver;
 
-	MovieService(MovieRepository movieRepository, Driver driver) {
+	private final DatabaseSelectionProvider databaseSelectionProvider;
+
+	MovieService(MovieRepository movieRepository,
+				 Neo4jClient neo4jClient,
+				 Driver driver,
+				 DatabaseSelectionProvider databaseSelectionProvider) {
+
 		this.movieRepository = movieRepository;
+		this.neo4jClient = neo4jClient;
 		this.driver = driver;
+		this.databaseSelectionProvider = databaseSelectionProvider;
 	}
 
-	public List<Movie> getDirectedBy(String name) {
-		return movieRepository.findAllByDirectorsName(name);
+	public MovieDetailsDto fetchDetailsByTitle(String title) {
+		return this.neo4jClient
+				.query("" +
+						"MATCH (movie:Movie {title: $title}) " +
+						"OPTIONAL MATCH (person:Person)-[r]->(movie) " +
+						"WITH movie, COLLECT({ name: person.name, job: REPLACE(TOLOWER(TYPE(r)), '_in', ''), role: HEAD(r.roles) }) as cast " +
+						"RETURN movie { .title, cast: cast }"
+				)
+				.in(database())
+				.bindAll(Map.of("title", title))
+				.fetchAs(MovieDetailsDto.class)
+				.mappedBy(this::toMovieDetails)
+				.one()
+				.orElse(null);
 	}
 
-	public List<Movie> getActedInBy(String name) {
-		return movieRepository.findAllByActorsPersonName(name);
+	public List<MovieResultDto> searchMoviesByTitle(String title) {
+		return this.movieRepository.findSearchResults(title)
+				.stream()
+				.map(MovieResultDto::new)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -40,12 +71,12 @@ public class MovieService {
 	 *
 	 * @return A representation D3.js can handle
 	 */
-	public Map<String, List<Object>> f() {
+	public Map<String, List<Object>> fetchMovieGraph() {
 
 		var nodes = new ArrayList<>();
 		var links = new ArrayList<>();
 
-		try (Session session = driver.session()) {
+		try (Session session = sessionFor(database())) {
 			var records = session.readTransaction(tx -> tx.run(""
 				+ " MATCH (m:Movie) <- [r:ACTED_IN] - (p:Person)"
 				+ " WITH m, p ORDER BY m.title, p.name"
@@ -57,7 +88,7 @@ public class MovieService {
 				var targetIndex = nodes.size();
 				nodes.add(movie);
 
-				record.get("actors").asList(v -> v.asString()).forEach(name -> {
+				record.get("actors").asList(Value::asString).forEach(name -> {
 					var actor = Map.of("label", "actor", "title", name);
 
 					int sourceIndex;
@@ -72,5 +103,34 @@ public class MovieService {
 			});
 		}
 		return Map.of("nodes", nodes, "links", links);
+	}
+
+	private Session sessionFor(String database) {
+		if (database == null) {
+			return driver.session();
+		}
+		return driver.session(SessionConfig.forDatabase(database));
+	}
+
+	private String database() {
+		return databaseSelectionProvider.getDatabaseSelection().getValue();
+	}
+
+	private MovieDetailsDto toMovieDetails(TypeSystem ignored, org.neo4j.driver.Record record) {
+		var movie = record.get("movie");
+		return new MovieDetailsDto(
+				movie.get("title").asString(),
+				movie.get("cast").asList((member) -> {
+					var result = new CastMemberDto(
+							member.get("name").asString(),
+							member.get("job").asString()
+					);
+					var role = member.get("role");
+					if (role.isNull()) {
+						return result;
+					}
+					return result.withRole(role.asString());
+				})
+		);
 	}
 }

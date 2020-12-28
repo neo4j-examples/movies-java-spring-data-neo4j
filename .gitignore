@@ -4,3 +4,4 @@ target
 *.class
 *.jar
 *.pyc
+/node_modules
