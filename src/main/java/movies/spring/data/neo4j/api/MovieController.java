@@ -1,23 +1,20 @@
 package movies.spring.data.neo4j.api;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
-import movies.spring.data.neo4j.movies.Movie;
+import movies.spring.data.neo4j.movies.MovieDetailsDto;
+import movies.spring.data.neo4j.movies.MovieResultDto;
 import movies.spring.data.neo4j.movies.MovieService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Michael J. Simons
  */
 @RestController
-@RequestMapping("/api/v0/movies")
-@Tag(name = "movies")
 class MovieController {
 
 	private final MovieService movieService;
@@ -26,18 +23,29 @@ class MovieController {
 		this.movieService = movieService;
 	}
 
-	@GetMapping("/directed_by/{name}")
-	List<Movie> getDirectedBy(@PathVariable String name) {
-		return movieService.getDirectedBy(name);
+	@GetMapping("/movie/{title}")
+	public MovieDetailsDto findByTitle(@PathVariable("title") String title) {
+		return movieService.fetchDetailsByTitle(title);
 	}
 
-	@GetMapping("/acted_in_by/{name}")
-	List<Movie> getActedInBy(@PathVariable String name) {
-		return movieService.getActedInBy(name);
+	@GetMapping("/search")
+	List<MovieResultDto> search(@RequestParam("q") String title) {
+		return movieService.searchMoviesByTitle(stripWildcards(title));
 	}
 
 	@GetMapping("/graph")
 	public Map<String, List<Object>> getGraph() {
-		return movieService.f();
+		return movieService.fetchMovieGraph();
+	}
+
+	private static String stripWildcards(String title) {
+		String result = title;
+		if (result.startsWith("*")) {
+			result = result.substring(1);
+		}
+		if (result.endsWith("*")) {
+			result = result.substring(0, result.length() - 1);
+		}
+		return result;
 	}
 }

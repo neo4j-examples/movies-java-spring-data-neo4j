@@ -1,5 +1,4 @@
-Movies Example Application
-==========================
+= Movies Example Application
 
 image:https://github.com/neo4j-examples/movies-java-spring-data-neo4j/workflows/build/badge.svg[Build Status,link=https://github.com/neo4j-examples/movies-java-spring-data-neo4j/actions]
 
@@ -10,153 +9,52 @@ It provides object-graph mapping (OGM) functionality and other features common t
 
 [NOTE]
 This project uses Spring Data Neo4j 6. The previous version, using SDN 5 + OGM can still be accessed under the
-https://github.com/neo4j-examples/movies-java-spring-data-neo4j/tree/sdn5+ogm branch.
+https://github.com/neo4j-examples/movies-java-spring-data-neo4j/tree/sdn5-ogm branch.
+
+[NOTE]
+For a broader overview of Spring Data Neo4j 6 with the same dataset, you can access the
+https://github.com/neo4j-examples/movies-java-spring-data-neo4j/tree/sdn6-full-example branch.
 
 The example project is described in detail on the https://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
 The project uses Java 11.
-
-== Quickstart
-
-First, you need to have a local Neo4j running.
-The easiest way is Docker.
-If you have a docker installed locally, than please run
-
-[source,console]
-----
-docker run --publish=7474:7474 --publish=7687:7687 -e 'NEO4J_AUTH=neo4j/secret' neo4j:4.1
-----
-
-Another option is to use Neo4j desktop, which can be downloaded from here: http://neo4j.com/download.
-If you chose that way, install and start as instructed by the desktop application. You need to start a new
-database inside desktop.
-
-. After you have Neo4j up and running, open up a browser and goto http://localhost:7474.
-Enter the credentials (`neo4j:secret` if you chose the Docker approach above or the credentials you supplied in Neo4j Desktop).
-Then
-. Run `:play movies` command, and click and run the Cypher statement to insert the dataset
-. Clone this project from GitHub
-. Update `src/main/resources/application.properties` with the username and password you set above.
-. Run the project with `./mvnw spring-boot:run`
-
-== Code Walkthrough
-
-To use Neo4j with Spring Data Neo4j, you just add the dependency for https://projects.spring.io/spring-boot/[Spring-Boot] and https://projects.spring.io/spring-data-neo4j/[Spring-Data-Neo4j] to your build setup.
-
-.pom.xml
-[source,xml]
-----
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-neo4j</artifactId>
-</dependency>
-----
-include::pom.xml[tags=dependencies]
-
-Describe your domain model with `@Node`, `@Relationship` and `@RelationshipProperties`.
-
-.Excerpt of the domain model in this application. Accessor are omitted for brevity.
-[source,java]
-----
-@Node
-public class Movie {
-
-	@Id
-	private final String title;
-
-	@Property("tagline")
-	private final String description;
-
-	@Relationship(type = "ACTED_IN", direction = Direction.INCOMING)
-	private List<Actor> actors = new ArrayList<>();
-
-	@Relationship(type = "DIRECTED", direction = Direction.INCOMING)
-	private List<Person> directors = new ArrayList<>();
-
-	private Integer released;
-
-	public Movie(String title, String description) {
-		this.title = title;
-		this.description = description;
-	}
-}
-
-@RelationshipProperties
-public class Actor {
-
-	@TargetNode
-	private final Person person;
-
-	private List<String> roles = new ArrayList<>();
-
-	public Actor(Person person) {
-		this.person = person;
-	}
-}
-
-@Node
-public class Person {
-
-	@Id
-	private final String name;
-
-	private Integer born;
-
-	public Person(Integer born, String name) {
-		this.born = born;
-		this.name = name;
-	}
-}
-----
-
-Those are interface based DAO implementation.
-Depending whether you extend from `Repository`, `CrudRepository` or `Neo4jRepository`, they declare a lot of functionality
-out of the box.
-We went with a minimalistic "declare things as needed"-approach.
-
-.MovieRepository.java
-[source,java]
-----
-interface MovieRepository extends Repository<Movie, String> {
-
-	List<Movie> findAll();
-
-	Optional<Movie> findById(String title);
-
-	Optional<Movie> findOneByTitle(String title);
-
-	List<Movie> findAllByTitleLikeIgnoreCase(String title);
-
-	List<Movie> findAllByDirectorsName(String name);
-
-	List<Movie> findAllByActorsPersonName(String name);
-}
-----
-
-In addition, you can choose to use the `Neo4jTemplate` to access your domain without repositories or the `Neo4jClient`
-to access the Neo4j database inside Spring transactions but without mapping at all.
-
-And last but not least, you can use the pure driver as we show in `MovieService`. We have no need for Spring transactions
-or mapping here, as we want to compute just a different graph representation for a front end visualization.
-
-We added https://springdoc.org to documente our rest endpoints.
-
 
 == The Stack
 
 These are the components of our Web Application:
 
 * Application Type:         Spring-Boot Java Web Application
-* Web framework:            Spring-Boot enabled Spring-WebMVC, Spring-Data-Rest
+* Web framework:            Spring-Boot enabled Spring-WebMVC
 * Persistence Access:       Spring-Data-Neo4j 6.x
-* Database:                 Neo4j-Server 4.x
+* Database:                 Neo4j-Server 3.5, or 4.x with multi-database
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
-* OpenAPI Documentation:    SpringDoc
 
-== Endpoints:
+Provision a database quickly with https://sandbox.neo4j.com/?usecase=movies[Neo4j Sandbox] or https://neo4j.com/cloud/aura/[Neo4j Aura].
 
-Goto http://localhost:8080/docs to access the OpenAPI Swagger documentation for the endpoints we expose.
-The generated documentation comes with cURL commands you can run in most environments from your favorite terminal.
+== Configuration options
 
-Goto http://localhost:8080 for a visualization and some interaction with this web application.
-The REST endpoints are designed to be used with the frontend of https://github.com/neo4j-examples/neo4j-movies-template.
+[%header,cols=2*]
+|===
+|Environment variable name
+|Default value (or N/A)
+
+|PORT
+|8080
+
+|NEO4J_URI
+|neo4j+s://demo.neo4jlabs.com
+
+|NEO4J_USER
+|movies
+
+|NEO4J_PASSWORD
+|movies
+
+|NEO4J_DATABASE
+|movies
+
+|NEO4J_VERSION
+|4
+|===
+
+Please set `NEO4J_VERSION` to `3.5` when running Neo4j 3.5.x. Leave as is otherwise.

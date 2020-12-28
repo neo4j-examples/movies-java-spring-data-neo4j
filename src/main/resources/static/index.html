@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://neo4j-documentation.github.io/developer-resources/language-guides/assets/css/main.css">
     <title>Neo4j Movies</title>
 </head>
 
@@ -25,8 +25,8 @@
             </div>
             <div class="navbar-header col-sm-6 col-md-6">
                 <div class="logo-well">
-                    <a href="https://neo4j.com/developer">
-                        <img src="/img/logo-white.svg" alt="Neo4j World's Leading Graph Database" id="logo">
+                    <a href="https://neo4j.com/developer/example-project" target="_blank">
+                    <img src="https://dist.neo4j.com/wp-content/uploads/neo4j_logo_globe1-150x150.png" alt="Neo4j World's Leading Graph Database" id="logo">
                     </a>
                 </div>
                 <div class="navbar-brand">
@@ -78,39 +78,34 @@
 </style>
 
 <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+<script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function () {
         function showMovie(title) {
-            $.get("/movies/search/findByTitle?title=" + encodeURIComponent(title), // todo fix paramter in SDN
+            $.get("/movie/" + encodeURIComponent(title),
                     function (data) {
                         if (!data) return;
-                        var movie = data;
-                        $("#title").text(movie.title);
-                        $("#poster").attr("src","/posters/"+encodeURIComponent(movie.title)+".jpg");
+                        $("#title").text(data.title);
+                        $("#poster").attr("src","http://neo4j-documentation.github.io/developer-resources/language-guides/assets/posters/"+encodeURIComponent(data.title)+".jpg");
                         var $list = $("#crew").empty();
-                        movie.roles.forEach(function (cast) {
-                            $.get(cast._links.person.href, function(personData) {
-                                var person = personData.name;
-                                var job = cast.job || "acted";
-                                $list.append($("<li>" + person + " " +job + (job == "acted"?" as " + cast.roles.join(", ") : "") + "</li>"));
-                            });
+                        data.cast.forEach(function (cast) {
+                            $list.append($("<li>" + cast.name + " " +cast.job + (cast.job == "acted"?" as " + cast.role : "") + "</li>"));
                         });
                     }, "json");
             return false;
         }
         function search() {
             var query=$("#search").find("input[name=search]").val();
-            $.get("/movies/search/findByTitleLike?title=*" + encodeURIComponent(query) + "*",
+            $.get("/search?q=" + encodeURIComponent(query),
                     function (data) {
                         var t = $("table#results tbody").empty();
-                        if (!data) return;
-                        data = data["_embedded"].movies;
-                        data.forEach(function (movie) {
+                        if (!data || data.length == 0) return;
+                        data.forEach(function (row) {
+                            var movie = row.movie;
                             $("<tr><td class='movie'>" + movie.title + "</td><td>" + movie.released + "</td><td>" + movie.tagline + "</td></tr>").appendTo(t)
                                     .click(function() { showMovie($(this).find("td.movie").text());})
                         });
-                        showMovie(data[0].title);
+                        showMovie(data[0].movie.title);
                     }, "json");
             return false;
         }
@@ -131,8 +126,8 @@
             .attr("pointer-events", "all");
 
     d3.json("/graph", function(error, graph) {
-        if (error) return;
-
+		if (error) return;
+		
         force.nodes(graph.nodes).links(graph.links).start();
 
         var link = svg.selectAll(".link")
