@@ -5,6 +5,7 @@ on:
     branches:
       - sdn6-full-example
   pull_request:
+    branches: [ '**' ]
 
 jobs:
   build:
