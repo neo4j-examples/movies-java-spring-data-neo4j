@@ -3,7 +3,7 @@ name: build
 on:
   push:
     branches:
-      - main
+      - sdn6-full-example
   pull_request:
 
 jobs:
