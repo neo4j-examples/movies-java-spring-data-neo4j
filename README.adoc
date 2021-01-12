@@ -10,7 +10,7 @@ It provides object-graph mapping (OGM) functionality and other features common t
 
 [NOTE]
 This project uses Spring Data Neo4j 6. The previous version, using SDN 5 + OGM can still be accessed under the
-https://github.com/neo4j-examples/movies-java-spring-data-neo4j/tree/sdn5+ogm branch.
+https://github.com/neo4j-examples/movies-java-spring-data-neo4j/tree/sdn5-ogm branch.
 
 The example project is described in detail on the https://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
