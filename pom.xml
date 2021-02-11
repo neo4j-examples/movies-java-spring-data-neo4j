@@ -17,7 +17,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<springdoc-openapi-ui.version>1.5.3</springdoc-openapi-ui.version>
+		<springdoc-openapi-ui.version>1.5.4</springdoc-openapi-ui.version>
 		<neo4j.version>4.2.3</neo4j.version>
 	</properties>
 
