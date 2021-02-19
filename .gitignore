@@ -3,5 +3,3 @@ target
 *.iml
 *.class
 *.jar
-*.pyc
-/node_modules
