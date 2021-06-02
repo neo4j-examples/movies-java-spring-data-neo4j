@@ -5,6 +5,7 @@ import movies.spring.data.neo4j.movies.MovieResultDto;
 import movies.spring.data.neo4j.movies.MovieService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,11 @@ class MovieController {
 	@GetMapping("/movie/{title}")
 	public MovieDetailsDto findByTitle(@PathVariable("title") String title) {
 		return movieService.fetchDetailsByTitle(title);
+	}
+
+	@PostMapping("/movie/{title}/vote")
+	public int voteByTitle(@PathVariable("title") String title) {
+		return movieService.voteInMovieByTitle(title);
 	}
 
 	@GetMapping("/search")

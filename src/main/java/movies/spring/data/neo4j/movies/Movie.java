@@ -19,6 +19,8 @@ public class Movie {
 
 	private Integer released;
 
+	private Long votes;
+
 	public Movie(String title, String tagline) {
 		this.title = title;
 		this.tagline = tagline;
@@ -36,7 +38,15 @@ public class Movie {
 		return released;
 	}
 
+	public Long getVotes() {
+		return votes;
+	}
+
 	public void setReleased(Integer released) {
 		this.released = released;
+	}
+
+	public void setVotes(Long votes) {
+		this.votes = votes;
 	}
 }

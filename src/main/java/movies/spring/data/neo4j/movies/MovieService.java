@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +57,18 @@ public class MovieService {
 				.mappedBy(this::toMovieDetails)
 				.one()
 				.orElse(null);
+	}
+
+	public int voteInMovieByTitle(String title) {
+		return this.neo4jClient
+				.query( "MATCH (m:Movie {title: $title}) " +
+						"WITH m, (CASE WHEN exists(m.votes) THEN m.votes ELSE 0 END) AS currentVotes " +
+						"SET m.votes = currentVotes + 1;" )
+				.in( database() )
+				.bindAll(Map.of("title", title))
+				.run()
+				.counters()
+				.propertiesSet();
 	}
 
 	public List<MovieResultDto> searchMoviesByTitle(String title) {
