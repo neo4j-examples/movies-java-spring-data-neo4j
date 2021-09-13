@@ -62,7 +62,7 @@ public class MovieService {
 	public int voteInMovieByTitle(String title) {
 		return this.neo4jClient
 				.query( "MATCH (m:Movie {title: $title}) " +
-						"WITH m, (CASE WHEN exists(m.votes) THEN m.votes ELSE 0 END) AS currentVotes " +
+						"WITH m, coalesce(m.votes, 0) AS currentVotes " +
 						"SET m.votes = currentVotes + 1;" )
 				.in( database() )
 				.bindAll(Map.of("title", title))
