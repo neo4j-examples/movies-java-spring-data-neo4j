@@ -1,14 +1,11 @@
 package movies.spring.data.neo4j.users;
 
-import java.nio.charset.Charset;
+import org.springframework.data.neo4j.core.mapping.callback.BeforeBindCallback;
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.function.Function;
-
-import org.springframework.data.neo4j.repository.event.BeforeBindCallback;
-import org.springframework.stereotype.Component;
 
 /**
  * An example of a custom callback that changes an entity before it is persisted.
