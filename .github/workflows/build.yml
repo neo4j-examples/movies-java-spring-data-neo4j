@@ -6,6 +6,8 @@ on:
       - main
   pull_request:
     branches: [ '**' ]
+  repository_dispatch:
+    types: [ 'movie-harness-change' ]
 
 jobs:
   build:
@@ -13,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11', '15' ]
+        java: [ '11', '17' ]
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK
@@ -35,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        neo4j-version: [ "3.5", "3.5-enterprise", "4.2", "4.2-enterprise" ]
+        neo4j-version: [ "3.5", "3.5-enterprise", "4.4", "4.4-enterprise" ]
     services:
       neo4j:
         image: neo4j:${{ matrix.neo4j-version }}
@@ -73,21 +75,21 @@ jobs:
         run: docker exec --interactive neo4j-e2e cypher-shell -u neo4j -p abcde --file /movies/movies.cypher
       - name: Check out project sources
         uses: actions/checkout@v2
-      - name: Start server
+      - name: Check out test harness sources
+        uses: actions/checkout@v2
+        with:
+          repository: neo4j-examples/movies-harness
+          path: e2e
+          ref: ${{ github.event.client_payload.sha }}
+      - uses: cypress-io/github-action@v2
         env:
           NEO4J_VERSION: ${{ matrix.neo4j-version }}
           NEO4J_URI: bolt://localhost
           NEO4J_DATABASE: neo4j
           NEO4J_USER: neo4j
           NEO4J_PASSWORD: abcde
-        run: mvn spring-boot:run &
-      - name: Check out test harness sources
-        uses: actions/checkout@v2
-        with:
-          repository: neo4j-examples/movies-harness
-          path: e2e
-      - uses: cypress-io/github-action@v2
         with:
           working-directory: e2e
           browser: chrome
           headless: true
+          start: mvn spring-boot:run --file ..
