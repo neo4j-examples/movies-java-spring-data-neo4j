@@ -26,7 +26,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 public class PresentationConfig {
 
 	@Bean
-	public RepositoryRestConfigurer repositoryRestConfigurer(MoviesModule moviesModuel) {
+	public RepositoryRestConfigurer repositoryRestConfigurer(MoviesModule moviesModule) {
 
 		return new RepositoryRestConfigurer() {
 
