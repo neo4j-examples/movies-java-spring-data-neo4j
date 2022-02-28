@@ -21,6 +21,13 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.22</version>
+		</dependency>
+
 		<!-- This is everything needed to work with Spring Data Neo4j 6.0. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
