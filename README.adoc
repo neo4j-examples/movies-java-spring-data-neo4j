@@ -2,7 +2,7 @@
 
 image:https://github.com/neo4j-examples/movies-java-spring-data-neo4j/workflows/build/badge.svg[Build Status,link=https://github.com/neo4j-examples/movies-java-spring-data-neo4j/actions]
 
-How to use Spring Boot, Spring Data, and Neo4j together.
+How to use Spring Boot, Spring Data, and Neo4j together with Lemessa.
 
 Spring Data Neo4j enables convenient integration of Neo4j in your Spring-based application.
 It provides object-graph mapping (OGM) functionality and other features common to the Spring Data projects.
