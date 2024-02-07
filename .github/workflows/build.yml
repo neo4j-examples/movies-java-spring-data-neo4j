@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11', '17' ]
+        java: [ '17', '21' ]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        neo4j-version: [ "3.5", "3.5-enterprise", "4.4", "4.4-enterprise" ]
+        neo4j-version: [ "3.5", "3.5-enterprise", "4.4", "4.4-enterprise", "5" ]
     services:
       neo4j:
         image: neo4j:${{ matrix.neo4j-version }}
