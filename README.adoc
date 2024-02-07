@@ -17,7 +17,7 @@ https://github.com/neo4j-examples/movies-java-spring-data-neo4j/tree/sdn6-full-e
 
 The example project is described in detail on the https://neo4j.com/developer/example-project/[Neo4j Developer Site]
 
-The project uses Java 11.
+The project uses Java 17.
 
 == The Stack
 
@@ -26,7 +26,7 @@ These are the components of our Web Application:
 * Application Type:         Spring-Boot Java Web Application
 * Web framework:            Spring-Boot enabled Spring-WebMVC
 * Persistence Access:       Spring-Data-Neo4j 6.x
-* Database:                 Neo4j-Server 3.5, or 4.x with multi-database
+* Database:                 Neo4j-Server 4.4, or 5.x
 * Frontend:                 jquery, bootstrap, http://d3js.org/[d3.js]
 
 Provision a database quickly with https://sandbox.neo4j.com/?usecase=movies[Neo4j Sandbox] or https://neo4j.com/cloud/aura/[Neo4j Aura].
