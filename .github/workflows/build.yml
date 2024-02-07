@@ -45,10 +45,10 @@ jobs:
         ports: [ "7687:7687" ]
         env:
           NEO4J_ACCEPT_LICENSE_AGREEMENT: yes
-          NEO4J_AUTH: "neo4j/abcde"
+          NEO4J_AUTH: "neo4j/it_is_now_verysecret"
         options: >-
           --name neo4j-e2e
-          --health-cmd "cypher-shell -u neo4j -p abcde 'RETURN 1'"
+          --health-cmd "cypher-shell -u neo4j -p it_is_now_verysecret 'RETURN 1'"
           --health-interval 10s
           --health-timeout 5s
           --health-start-period 10s
@@ -71,10 +71,10 @@ jobs:
         run: curl --fail --output /tmp/movies.cypher https://raw.githubusercontent.com/neo4j-graph-examples/movies/8508a527d8aa1c261b0978d1d5b3156d4ac8328e/scripts/import.cypher
       - name: Import dataset (Neo4j 3.5)
         if: ${{ startsWith(matrix.neo4j-version, '3.5') }}
-        run: docker exec --interactive neo4j-e2e sh -c 'cat /movies/movies.cypher | cypher-shell -u neo4j -p abcde'
+        run: docker exec --interactive neo4j-e2e sh -c 'cat /movies/movies.cypher | cypher-shell -u neo4j -p it_is_now_verysecret'
       - name: Import dataset
         if: ${{ !startsWith(matrix.neo4j-version, '3.5') }}
-        run: docker exec --interactive neo4j-e2e cypher-shell -u neo4j -p abcde --file /movies/movies.cypher
+        run: docker exec --interactive neo4j-e2e cypher-shell -u neo4j -p it_is_now_verysecret --file /movies/movies.cypher
       - name: Check out project sources
         uses: actions/checkout@v4
       - name: Check out test harness sources
@@ -89,7 +89,7 @@ jobs:
           NEO4J_URI: bolt://localhost
           NEO4J_DATABASE: neo4j
           NEO4J_USER: neo4j
-          NEO4J_PASSWORD: abcde
+          NEO4J_PASSWORD: it_is_now_verysecret
         with:
           working-directory: e2e
           browser: chrome
