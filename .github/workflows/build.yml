@@ -38,27 +38,27 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        neo4j-version: [ "3.5", "3.5-enterprise", "4.4", "4.4-enterprise", "5" ]
+        neo4j-version: [ "4.4", "4.4-enterprise", "5", "5-enterprise" ]
     services:
       neo4j:
         image: neo4j:${{ matrix.neo4j-version }}
         ports: [ "7687:7687" ]
         env:
           NEO4J_ACCEPT_LICENSE_AGREEMENT: yes
-          NEO4J_AUTH: "neo4j/abcde"
+          NEO4J_AUTH: "neo4j/letmein!"
         options: >-
           --name neo4j-e2e
-          --health-cmd "cypher-shell -u neo4j -p abcde 'RETURN 1'"
+          --health-cmd "cypher-shell -u neo4j -p 'letmein!' 'RETURN 1'"
           --health-interval 10s
           --health-timeout 5s
           --health-start-period 10s
           --health-retries 5
           --volume /tmp:/movies
     steps:
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 11
+          java-version: 17
           distribution: temurin
       - name: Cache local Maven repository
         uses: actions/cache@v4
@@ -69,12 +69,8 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Download dataset
         run: curl --fail --output /tmp/movies.cypher https://raw.githubusercontent.com/neo4j-graph-examples/movies/8508a527d8aa1c261b0978d1d5b3156d4ac8328e/scripts/import.cypher
-      - name: Import dataset (Neo4j 3.5)
-        if: ${{ startsWith(matrix.neo4j-version, '3.5') }}
-        run: docker exec --interactive neo4j-e2e sh -c 'cat /movies/movies.cypher | cypher-shell -u neo4j -p abcde'
       - name: Import dataset
-        if: ${{ !startsWith(matrix.neo4j-version, '3.5') }}
-        run: docker exec --interactive neo4j-e2e cypher-shell -u neo4j -p abcde --file /movies/movies.cypher
+        run: docker exec --interactive neo4j-e2e cypher-shell -u neo4j -p 'letmein!' --file /movies/movies.cypher
       - name: Check out project sources
         uses: actions/checkout@v4
       - name: Check out test harness sources
@@ -89,7 +85,7 @@ jobs:
           NEO4J_URI: bolt://localhost
           NEO4J_DATABASE: neo4j
           NEO4J_USER: neo4j
-          NEO4J_PASSWORD: abcde
+          NEO4J_PASSWORD: letmein!
         with:
           working-directory: e2e
           browser: chrome
