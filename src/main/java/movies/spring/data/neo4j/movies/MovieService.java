@@ -45,12 +45,12 @@ public class MovieService {
 
 	public MovieDetailsDto fetchDetailsByTitle(String title) {
 		return this.neo4jClient
-				.query("" +
-						"MATCH (movie:Movie {title: $title}) " +
-						"OPTIONAL MATCH (person:Person)-[r]->(movie) " +
-						"WITH movie, COLLECT({ name: person.name, job: REPLACE(TOLOWER(TYPE(r)), '_in', ''), role: HEAD(r.roles) }) as cast " +
-						"RETURN movie { .title, cast: cast }"
-				)
+				.query("""
+					MATCH (movie:Movie {title: $title})
+					OPTIONAL MATCH (person:Person)-[r]->(movie)
+					WITH movie, COLLECT({ name: person.name, job: REPLACE(TOLOWER(TYPE(r)), '_in', ''), role: HEAD(r.roles) }) as cast
+					RETURN movie { .title, cast: cast }
+					""")
 				.in(database())
 				.bindAll(Map.of("title", title))
 				.fetchAs(MovieDetailsDto.class)
@@ -61,9 +61,11 @@ public class MovieService {
 
 	public int voteInMovieByTitle(String title) {
 		return this.neo4jClient
-				.query( "MATCH (m:Movie {title: $title}) " +
-						"WITH m, coalesce(m.votes, 0) AS currentVotes " +
-						"SET m.votes = currentVotes + 1;" )
+				.query("""
+					MATCH (m:Movie {title: $title})
+					WITH m, coalesce(m.votes, 0) AS currentVotes
+					SET m.votes = currentVotes + 1
+					""")
 				.in( database() )
 				.bindAll(Map.of("title", title))
 				.run()
@@ -75,7 +77,7 @@ public class MovieService {
 		return this.movieRepository.findSearchResults(title)
 				.stream()
 				.map(MovieResultDto::new)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	/**
@@ -90,10 +92,11 @@ public class MovieService {
 		var links = new ArrayList<>();
 
 		try (Session session = sessionFor(database())) {
-			var records = session.readTransaction(tx -> tx.run(""
-				+ " MATCH (m:Movie) <- [r:ACTED_IN] - (p:Person)"
-				+ " WITH m, p ORDER BY m.title, p.name"
-				+ " RETURN m.title AS movie, collect(p.name) AS actors"
+			var records = session.executeRead(tx -> tx.run("""
+				MATCH (m:Movie) <- [r:ACTED_IN] - (p:Person)
+				WITH m, p ORDER BY m.title, p.name
+				RETURN m.title AS movie, collect(p.name) AS actors
+				"""
 			).list());
 			records.forEach(record -> {
 				var movie = Map.of("label", "movie", "title", record.get("movie").asString());
