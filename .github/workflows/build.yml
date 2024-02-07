@@ -17,13 +17,14 @@ jobs:
       matrix:
         java: [ '11', '17' ]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
+          distribution: temurin
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -55,11 +56,12 @@ jobs:
           --volume /tmp:/movies
     steps:
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: 11
+          distribution: temurin
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -74,14 +76,14 @@ jobs:
         if: ${{ !startsWith(matrix.neo4j-version, '3.5') }}
         run: docker exec --interactive neo4j-e2e cypher-shell -u neo4j -p abcde --file /movies/movies.cypher
       - name: Check out project sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Check out test harness sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: neo4j-examples/movies-harness
           path: e2e
           ref: ${{ github.event.client_payload.sha }}
-      - uses: cypress-io/github-action@v2
+      - uses: cypress-io/github-action@v6
         env:
           NEO4J_VERSION: ${{ matrix.neo4j-version }}
           NEO4J_URI: bolt://localhost
