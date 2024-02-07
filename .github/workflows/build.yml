@@ -90,3 +90,4 @@ jobs:
           working-directory: e2e
           browser: chrome
           start: mvn spring-boot:run --file ..
+          wait-on: 'http://localhost:8080'
