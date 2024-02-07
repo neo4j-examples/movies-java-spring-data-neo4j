@@ -38,13 +38,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        neo4j-version: [ "3.5", "3.5-enterprise", "4.4", "4.4-enterprise", "5" ]
+        neo4j-version: [ "4.4", "4.4-enterprise", "5", "5-enterprise" ]
     services:
       neo4j:
         image: neo4j:${{ matrix.neo4j-version }}
         ports: [ "7687:7687" ]
         env:
           NEO4J_ACCEPT_LICENSE_AGREEMENT: yes
+
           NEO4J_AUTH: "neo4j/it_is_now_verysecret"
         options: >-
           --name neo4j-e2e
@@ -55,10 +56,10 @@ jobs:
           --health-retries 5
           --volume /tmp:/movies
     steps:
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 11
+          java-version: 17
           distribution: temurin
       - name: Cache local Maven repository
         uses: actions/cache@v4
@@ -68,12 +69,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Download dataset
-        run: curl --fail --output /tmp/movies.cypher https://raw.githubusercontent.com/neo4j-graph-examples/movies/8508a527d8aa1c261b0978d1d5b3156d4ac8328e/scripts/import.cypher
-      - name: Import dataset (Neo4j 3.5)
-        if: ${{ startsWith(matrix.neo4j-version, '3.5') }}
-        run: docker exec --interactive neo4j-e2e sh -c 'cat /movies/movies.cypher | cypher-shell -u neo4j -p it_is_now_verysecret'
+        run: curl --fail --output /tmp/movies.cypher https://raw.githubusercontent.com/neo4j-graph-examples/movies/7e75003d2d32bf42ef9c740d1321a310fac1d1a6/scripts/movies.cypher
       - name: Import dataset
-        if: ${{ !startsWith(matrix.neo4j-version, '3.5') }}
         run: docker exec --interactive neo4j-e2e cypher-shell -u neo4j -p it_is_now_verysecret --file /movies/movies.cypher
       - name: Check out project sources
         uses: actions/checkout@v4
@@ -89,8 +86,10 @@ jobs:
           NEO4J_URI: bolt://localhost
           NEO4J_DATABASE: neo4j
           NEO4J_USER: neo4j
+
           NEO4J_PASSWORD: it_is_now_verysecret
         with:
           working-directory: e2e
           browser: chrome
           start: mvn spring-boot:run --file ..
+          wait-on: 'http://localhost:8080'
