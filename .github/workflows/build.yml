@@ -93,5 +93,4 @@ jobs:
         with:
           working-directory: e2e
           browser: chrome
-          headless: true
           start: mvn spring-boot:run --file ..
